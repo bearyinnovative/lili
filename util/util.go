@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"io/ioutil"
@@ -6,6 +6,11 @@ import (
 	"os/exec"
 	"syscall"
 )
+
+func init() {
+	// log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Println("init util")
+}
 
 func Diff(s1, s2 string) string {
 	if s1 == s2 {
@@ -63,5 +68,10 @@ func LogIfErr(err error) bool {
 	}
 
 	log.Println("[ERROR]", err)
+	// panic(err)
 	return true
+}
+
+func Log(v ...interface{}) {
+	log.Println(v)
 }

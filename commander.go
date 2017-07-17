@@ -1,55 +1,67 @@
 package main
 
 import (
-	"io/ioutil"
+	"fmt"
 	"log"
-	"os"
-	"strings"
 	"time"
+
+	. "./commands"
+	. "./model"
+	. "./util"
 )
 
 func RunCommander() {
-	// enter the commands folder
-	if err := os.Chdir("./commands"); err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+	cmds := []CommandType{
+		NewBCZhihu(),
 	}
 
-	cmds := findCommands(".")
 	for i := 0; i < len(cmds); i++ {
 		// fmt.Printf("%+v\n", cmds[i])
-		cmds[i].Start()
+		start(cmds[i])
 	}
 
-	time.Sleep(time.Hour * 100)
+	// FIXME:
+	// wait forever
+	select {}
 }
 
-func findCommands(path string) []*Command {
-	n := &BCIncommingNotifier{
-		Domain: "=bw52O",
-		Token:  "08c0d225efc37cb33d31d089b91233d1",
+func start(c CommandType) {
+	// trigger once
+	fetchAndNotify(c)
+
+	ticker := time.NewTicker(c.Interval())
+	// schedule run
+	go func() {
+		for _ = range ticker.C {
+			fetchAndNotify(c)
+		}
+	}()
+}
+
+func fetchAndNotify(c CommandType) {
+	items, err := c.Fetch()
+	if err != nil || len(items) == 0 {
+		return
 	}
 
-	cmds := []*Command{}
-	files, err := ioutil.ReadDir(path)
-	FatalIfErr(err)
+	notifiedCount := 0
 
-	for _, f := range files {
-		if strings.HasPrefix(f.Name(), ".") {
-			continue
-		}
-		if strings.HasPrefix(f.Name(), "_") {
+	for _, item := range items {
+		created, err := DBContext.UpsertItem(item)
+		if LogIfErr(err) {
 			continue
 		}
 
-		cmd := MakeCommand(f)
-		if cmd == nil {
-			log.Println("can't make command from:", f)
+		if !created {
 			continue
 		}
-		cmd.AddNotifier(n)
-		cmds = append(cmds, cmd)
+
+		notifiedCount += 1
+
+		// notify
+		text := fmt.Sprintf("[NEW] %s", item.Desc)
+		c.Notifier().Notify(text)
 	}
 
-	return cmds
+	log.Printf("[%s] fetched %d items, notified %d", c.Name(), len(items), notifiedCount)
 }

@@ -1,10 +1,12 @@
-package main
+package model
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	. "../util"
 )
 
 type NotifierType interface {
@@ -12,17 +14,41 @@ type NotifierType interface {
 }
 
 type BCIncommingNotifier struct {
-	Domain string
-	Token  string
+	Domain    string
+	Token     string
+	ToUser    string
+	ToChannel string
+}
+
+func DefaultChannelNotifier(to string) NotifierType {
+	return &BCIncommingNotifier{
+		Domain:    "=bw52O",
+		Token:     "08c0d225efc37cb33d31d089b91233d1",
+		ToChannel: to,
+	}
+}
+
+func DefaultUserNotifier(to string) NotifierType {
+	return &BCIncommingNotifier{
+		Domain: "=bw52O",
+		Token:  "08c0d225efc37cb33d31d089b91233d1",
+		ToUser: to,
+	}
 }
 
 func (bc *BCIncommingNotifier) Notify(text string) {
 	path := fmt.Sprintf("https://hook.bearychat.com/%s/incoming/%s", bc.Domain, bc.Token)
 
 	dic := map[string]string{
-		// "user": "rocry", // TODO: remove this
 		"text": text,
 	}
+	if bc.ToUser != "" {
+		dic["user"] = bc.ToUser
+	}
+	if bc.ToChannel != "" {
+		dic["channel"] = bc.ToChannel
+	}
+
 	jsonValue, err := json.Marshal(dic)
 	FatalIfErr(err)
 
