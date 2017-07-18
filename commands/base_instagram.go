@@ -18,6 +18,7 @@ const (
 type BaseInstagram struct {
 	notifier      NotifierType
 	ID            string
+	RootPath      string
 	PathGenerator func(string) string
 }
 
@@ -42,6 +43,7 @@ func (c *BaseInstagram) Fetch() (results []*Item, err error) {
 	// Create request
 	path := c.PathGenerator(token)
 	req, err := http.NewRequest("GET", path, nil)
+	// fmt.Println("GET", path)
 
 	// Fetch Request
 	resp, err := client.Do(req)
@@ -55,7 +57,7 @@ func (c *BaseInstagram) Fetch() (results []*Item, err error) {
 		return
 	}
 
-	data := json.GetPath("user", "media", "nodes")
+	data := json.GetPath(c.RootPath, "media", "nodes")
 
 	for i := 0; i < len(data.MustArray([]interface{}{})); i++ {
 		d := data.GetIndex(i)
