@@ -19,7 +19,7 @@ type Item struct {
 }
 
 func (i *Item) IsValid() bool {
-	if i.Identifier == "" || i.Name == "" || i.Desc == "" {
+	if i.Identifier == "" || i.Name == "" {
 		return false
 	}
 

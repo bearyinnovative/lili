@@ -14,6 +14,8 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
+		NewRoCryInstagram(),
+		NewArkDomeInstagram(),
 		NewArkDome(),
 		NewBCV2ex(),
 		NewBCZhihu(),
