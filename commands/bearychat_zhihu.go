@@ -75,21 +75,38 @@ func (z *BCZhihu) Fetch() (results []*Item, err error) {
 			continue
 		}
 
+		var created time.Time
+		rawDateStr := doc.Find("a.time.text-muted").Text()
+		dateStrComps := strings.Split(rawDateStr, " ")
+		if len(dateStrComps) != 0 {
+			loc, err := time.LoadLocation("Local")
+			if LogIfErr(err) {
+				return nil, err
+			}
+
+			dateStr := dateStrComps[len(dateStrComps)-1]
+			created, err = time.ParseInLocation("2006-01-02", dateStr, loc)
+			if LogIfErr(err) {
+				return nil, err
+			}
+		}
+
 		author := doc.Find("a.author").Text()
 
 		// use link as part of identifier
-		item := z.createItem(link, fmt.Sprintf("%s\n%s: %s", title, author, link), link)
+		item := z.createItem(link, fmt.Sprintf("%s\n%s: %s", title, author, link), link, created)
 		results = append(results, item)
 	}
 
 	return
 }
 
-func (z *BCZhihu) createItem(id, desc, ref string) *Item {
+func (z *BCZhihu) createItem(id, desc, ref string, created time.Time) *Item {
 	return &Item{
 		Name:       z.Name(),
 		Identifier: "bc_zhihu_" + id,
 		Desc:       desc,
 		Ref:        ref,
+		Created:    created,
 	}
 }
