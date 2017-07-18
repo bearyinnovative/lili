@@ -10,7 +10,7 @@ import (
 )
 
 type NotifierType interface {
-	Notify(text string)
+	Notify(text string, images []string)
 }
 
 type BCIncommingNotifier struct {
@@ -36,10 +36,27 @@ func DefaultUserNotifier(to string) NotifierType {
 	}
 }
 
-func (bc *BCIncommingNotifier) Notify(text string) {
+/*
+{
+    "text": "text, this field may accept markdown",
+    "markdown": true,
+    "channel": "bearychat-dev",
+    "attachments": [
+        {
+            "title": "title_1",
+            "text": "attachment_text",
+            "color": "#ffa500",
+            "images": [
+                {"url": "http://img3.douban.com/icon/ul15067564-30.jpg"}
+            ]
+        }
+    ]
+}
+*/
+func (bc *BCIncommingNotifier) Notify(text string, images []string) {
 	path := fmt.Sprintf("https://hook.bearychat.com/%s/incoming/%s", bc.Domain, bc.Token)
 
-	dic := map[string]string{
+	dic := map[string]interface{}{
 		"text": text,
 	}
 	if bc.ToUser != "" {
@@ -49,7 +66,22 @@ func (bc *BCIncommingNotifier) Notify(text string) {
 		dic["channel"] = bc.ToChannel
 	}
 
+	if len(images) > 0 {
+		imagesArr := []interface{}{}
+		for _, img := range images {
+			imagesArr = append(imagesArr, map[string]string{
+				"url": img,
+			})
+		}
+		dic["attachments"] = []interface{}{
+			map[string]interface{}{
+				"images": imagesArr,
+			},
+		}
+	}
+
 	jsonValue, err := json.Marshal(dic)
+	// Log("jsonValue:", string(jsonValue))
 	FatalIfErr(err)
 
 	body := bytes.NewBuffer(jsonValue)

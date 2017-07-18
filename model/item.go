@@ -8,7 +8,8 @@ type Item struct {
 	Desc       string `bson:"desc"`
 	Name       string `bson:"name"`
 
-	Ref string `bson:"ref"`
+	Ref    string   `bson:"ref"`
+	Images []string `bson:"images"`
 
 	Key        string   `bson:"key"`
 	KeyHistory []string `bson:"key_history"`

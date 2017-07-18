@@ -14,6 +14,7 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
+		NewArkDome(),
 		NewBCV2ex(),
 		NewBCZhihu(),
 	}
@@ -68,7 +69,7 @@ func fetchAndNotify(c CommandType) {
 
 		// notify
 		text := fmt.Sprintf("[NEW] %s (%s)", item.Desc, humanize.Time(item.Created))
-		c.Notifier().Notify(text)
+		c.Notifier().Notify(text, item.Images)
 	}
 
 	log.Printf("[%s] fetched %d items, notified %d", c.Name(), len(items), notifiedCount)
