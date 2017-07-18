@@ -68,7 +68,7 @@ func LogIfErr(err error) bool {
 	}
 
 	log.Println("[ERROR]", err)
-	// panic(err)
+	panic(err)
 	return true
 }
 

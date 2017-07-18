@@ -24,3 +24,11 @@ func (i *Item) IsValid() bool {
 
 	return true
 }
+
+func (i *Item) InDays(n int) bool {
+	if time.Now().Sub(i.Created).Hours() < float64(n*24) {
+		return true
+	}
+
+	return false
+}

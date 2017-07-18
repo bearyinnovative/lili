@@ -82,7 +82,6 @@ func (z *BCZhihu) Fetch() (results []*Item, err error) {
 		results = append(results, item)
 	}
 
-	fmt.Printf("%v\n", results)
 	return
 }
 

@@ -8,10 +8,13 @@ import (
 	. "./commands"
 	. "./model"
 	. "./util"
+
+	"github.com/dustin/go-humanize"
 )
 
 func RunCommander() {
 	cmds := []CommandType{
+		NewBCV2ex(),
 		NewBCZhihu(),
 	}
 
@@ -56,10 +59,15 @@ func fetchAndNotify(c CommandType) {
 			continue
 		}
 
+		if !item.InDays(20) {
+			Log("too old to notify:", item.Desc)
+			continue
+		}
+
 		notifiedCount += 1
 
 		// notify
-		text := fmt.Sprintf("[NEW] %s", item.Desc)
+		text := fmt.Sprintf("[NEW] %s (%s)", item.Desc, humanize.Time(item.Created))
 		c.Notifier().Notify(text)
 	}
 
