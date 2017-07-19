@@ -35,8 +35,6 @@ func NewArkDome() *ArkDome {
 }
 
 func (c *ArkDome) Fetch() (results []*Item, err error) {
-	Log("start fetching", c.Name())
-
 	// https://www.douban.com/people/arkdome/statuses (GET https://www.douban.com/people/arkdome/statuses)
 
 	// Create client

@@ -19,7 +19,9 @@ func RunCommander() {
 		NewRoCryInstagram(),
 		NewArkDome(),
 		NewBCV2ex(),
-		NewBCZhihu(),
+		NewBearyChatZhihu(),
+		NewDingDingZhihu(),
+		NewSlackZhihu(),
 	}
 
 	for i := 0; i < len(cmds); i++ {

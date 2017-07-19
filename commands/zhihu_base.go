@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -13,37 +14,35 @@ import (
 	simplejson "github.com/bitly/go-simplejson"
 )
 
-type BCZhihu struct {
+type BaseZhihu struct {
 	notifier NotifierType
+	Query    string
 }
 
-func (c *BCZhihu) Name() string {
-	return "zhihu-bearychat"
+func (c *BaseZhihu) Name() string {
+	return "zhihu-" + c.Query
 }
 
-func (c *BCZhihu) Interval() time.Duration {
+func (c *BaseZhihu) Interval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BCZhihu) Notifier() NotifierType {
+func (c *BaseZhihu) Notifier() NotifierType {
 	return c.notifier
 }
 
-func NewBCZhihu() *BCZhihu {
-	return &BCZhihu{
-		notifier: DefaultChannelNotifier("不是真的lili"),
-	}
-}
-
-func (z *BCZhihu) Fetch() (results []*Item, err error) {
-	Log("start fetching", z.Name())
-
+func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://www.zhihu.com/r/search?q=bearychat&type=content", nil)
+	path := fmt.Sprintf("https://www.zhihu.com/r/search?q=%s&type=content", url.PathEscape(z.Query))
+	req, err := http.NewRequest("GET", path, nil)
 	resp, err := client.Do(req)
 	if LogIfErr(err) {
 		return
 	}
+
+	// bytes, err := ioutil.ReadAll(resp.Body)
+	// LogIfErr(err)
+	// fmt.Println("testtttt", string(bytes))
 
 	defer resp.Body.Close()
 	json, err := simplejson.NewFromReader(resp.Body)
@@ -101,10 +100,10 @@ func (z *BCZhihu) Fetch() (results []*Item, err error) {
 	return
 }
 
-func (z *BCZhihu) createItem(id, desc, ref string, created time.Time) *Item {
+func (z *BaseZhihu) createItem(id, desc, ref string, created time.Time) *Item {
 	return &Item{
 		Name:       z.Name(),
-		Identifier: "bc_zhihu_" + id,
+		Identifier: "bc_zhihu_" + id, // bc_ for history reason
 		Desc:       desc,
 		Ref:        ref,
 		Created:    created,
