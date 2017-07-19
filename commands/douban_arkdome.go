@@ -30,7 +30,7 @@ func (c *ArkDome) Notifier() NotifierType {
 
 func NewArkDome() *ArkDome {
 	return &ArkDome{
-		notifier: DefaultChannelNotifier("云养猫"),
+		notifier: CatNotifier,
 	}
 }
 

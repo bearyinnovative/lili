@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	. "../model"
@@ -11,36 +12,32 @@ import (
 	simplejson "github.com/bitly/go-simplejson"
 )
 
-type BCV2ex struct {
+type BaseV2EX struct {
 	notifier NotifierType
+	Query    string
 }
 
-func (c *BCV2ex) Name() string {
-	return "v2ex-bearychat"
+func (c *BaseV2EX) Name() string {
+	return "v2ex-" + c.Query
 }
 
-func (c *BCV2ex) Interval() time.Duration {
+func (c *BaseV2EX) Interval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BCV2ex) Notifier() NotifierType {
+func (c *BaseV2EX) Notifier() NotifierType {
 	return c.notifier
 }
 
-func NewBCV2ex() *BCV2ex {
-	return &BCV2ex{
-		notifier: DefaultChannelNotifier("不是真的lili"),
-	}
-}
-
-func (c *BCV2ex) Fetch() (results []*Item, err error) {
+func (c *BaseV2EX) Fetch() (results []*Item, err error) {
 	// custom search v2ex (GET https://www.googleapis.com/customsearch/v1?key=AIzaSyC1Q3F9GsEaIaxLe4zRwMeOhhNr7axtXEg&cx=011777316675351136864:22g5hinnt0i&q=bearychat)
 
 	// Create client
 	client := &http.Client{}
 
 	// Create request
-	req, err := http.NewRequest("GET", "https://www.googleapis.com/customsearch/v1?key=AIzaSyC1Q3F9GsEaIaxLe4zRwMeOhhNr7axtXEg&cx=011777316675351136864:22g5hinnt0i&q=bearychat", nil)
+	path := fmt.Sprintf("https://www.googleapis.com/customsearch/v1?key=AIzaSyC1Q3F9GsEaIaxLe4zRwMeOhhNr7axtXEg&cx=011777316675351136864:22g5hinnt0i&q=%s", url.PathEscape(c.Query))
+	req, err := http.NewRequest("GET", path, nil)
 	if LogIfErr(err) {
 		return
 	}

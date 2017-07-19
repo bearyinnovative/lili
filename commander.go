@@ -14,14 +14,17 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
+		NewDabieCatInstagram(),
 		NewArkDomeInstagram(),
 		NewArkDomeInstagram2(),
 		NewRoCryInstagram(),
 		NewArkDome(),
-		NewBCV2ex(),
 		NewBearyChatZhihu(),
 		NewDingDingZhihu(),
 		NewSlackZhihu(),
+		NewBearyChatV2EX(),
+		NewDingDingV2EX(),
+		NewSlackV2EX(),
 	}
 
 	for i := 0; i < len(cmds); i++ {

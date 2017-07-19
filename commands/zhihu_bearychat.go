@@ -11,7 +11,7 @@ type BearyChatZhihu struct {
 func NewBearyChatZhihu() *BearyChatZhihu {
 	return &BearyChatZhihu{
 		&BaseZhihu{
-			notifier: DefaultChannelNotifier("不是真的lili"),
+			notifier: LiliNotifier,
 			Query:    "BearyChat",
 		},
 	}

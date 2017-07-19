@@ -9,6 +9,14 @@ import (
 	. "../util"
 )
 
+var LiliNotifier NotifierType
+var CatNotifier NotifierType
+
+func init() {
+	LiliNotifier = DefaultChannelNotifier("不是真的lili")
+	CatNotifier = DefaultChannelNotifier("云养猫")
+}
+
 type NotifierType interface {
 	Notify(text string, images []string)
 }

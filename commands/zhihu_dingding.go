@@ -11,7 +11,7 @@ type DingDingZhihu struct {
 func NewDingDingZhihu() *DingDingZhihu {
 	return &DingDingZhihu{
 		&BaseZhihu{
-			notifier: DefaultChannelNotifier("不是真的lili"),
+			notifier: LiliNotifier,
 			Query:    "钉钉",
 		},
 	}

@@ -13,7 +13,7 @@ type ArkDomeInstagram2 struct {
 func NewArkDomeInstagram2() *ArkDomeInstagram2 {
 	return &ArkDomeInstagram2{
 		&BaseInstagram{
-			notifier: DefaultChannelNotifier("云养猫"),
+			notifier: CatNotifier,
 			RootPath: "tag",
 			ID:       "tag-arkdome",
 			PathGenerator: func(token string) string {
