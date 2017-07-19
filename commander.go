@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	. "./commands"
-	. "./model"
-	. "./util"
+	. "github.com/bearyinnovative/lili/commands"
+	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/util"
 
 	"github.com/dustin/go-humanize"
 )

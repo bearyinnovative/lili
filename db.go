@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	. "./model"
-	. "./util"
+	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/util"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

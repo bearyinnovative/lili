@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	. "../model"
-	. "../util"
+	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/util"
 
 	simplejson "github.com/bitly/go-simplejson"
 )

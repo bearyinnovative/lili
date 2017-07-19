@@ -1,7 +1,7 @@
 package commands
 
 import (
-	. "../model"
+	. "github.com/bearyinnovative/lili/model"
 )
 
 type BearyChatV2EX struct {

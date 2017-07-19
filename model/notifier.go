@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	. "../util"
+	. "github.com/bearyinnovative/lili/util"
 )
 
 var LiliNotifier NotifierType

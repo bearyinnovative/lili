@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	. "../model"
+	. "github.com/bearyinnovative/lili/model"
 )
 
 type ArkDomeInstagram2 struct {

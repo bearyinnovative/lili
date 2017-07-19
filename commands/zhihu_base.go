@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	. "../model"
-	. "../util"
+	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/util"
 
 	"github.com/PuerkitoBio/goquery"
 	simplejson "github.com/bitly/go-simplejson"

@@ -1,0 +1,73 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "qqEqqDof8KeFF2SIDjikxk5Oz7U=",
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "e1271ee34c6a305e38566ecd27ae374944907ee9",
+			"revisionTime": "2017-02-12T16:36:42Z"
+		},
+		{
+			"checksumSHA1": "2rWSos1D+xqNSGkvEMOG3pntod8=",
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "349dd0209470eabd9514242c688c403c0926d266",
+			"revisionTime": "2016-12-24T14:14:13Z"
+		},
+		{
+			"checksumSHA1": "4+wnUoVOdK9cHy7rqdQdweYKiOA=",
+			"path": "github.com/bitly/go-simplejson",
+			"revision": "aabad6e819789e569bd6aabf444c935aa9ba1e44",
+			"revisionTime": "2015-09-15T16:53:35Z"
+		},
+		{
+			"checksumSHA1": "rhLUtXvcmouYuBwOq9X/nYKzvNg=",
+			"path": "github.com/dustin/go-humanize",
+			"revision": "259d2a102b871d17f30e3cd9881a642961a1e486",
+			"revisionTime": "2017-02-28T07:34:54Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "61557ac0112b576429a0df080e1c2cef5dfbb642",
+			"revisionTime": "2017-01-26T11:54:58Z"
+		},
+		{
+			"checksumSHA1": "z79z5msRzgU48FCZxSuxfU8b4rs=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "61557ac0112b576429a0df080e1c2cef5dfbb642",
+			"revisionTime": "2017-01-26T11:54:58Z"
+		},
+		{
+			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
+			"path": "gopkg.in/mgo.v2",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "YsB2DChSV9HxdzHaKATllAUKWSI=",
+			"path": "gopkg.in/mgo.v2/bson",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "XQsrqoNT1U0KzLxOFcAZVvqhLfk=",
+			"path": "gopkg.in/mgo.v2/internal/json",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "LEvMCnprte47qdAxWvQ/zRxVF1U=",
+			"path": "gopkg.in/mgo.v2/internal/sasl",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "+1WDRPaOphSCmRMxVPIPBV4aubc=",
+			"path": "gopkg.in/mgo.v2/internal/scram",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		}
+	],
+	"rootPath": "github.com/bearyinnovative/lili"
+}
