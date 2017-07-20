@@ -100,7 +100,7 @@ func (c *ArkDome) Fetch() (results []*Item, err error) {
 
 		// fmt.Printf("Review %d: %s[%d] (%v)\n", i, text, len(pics), created)
 
-		if len(pics) == 0 || text == "" {
+		if len(pics) == 0 {
 			return
 		}
 
