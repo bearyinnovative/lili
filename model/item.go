@@ -5,17 +5,19 @@ import "time"
 type Item struct {
 	// required
 	Identifier string `bson:"identifier"`
-	Desc       string `bson:"desc"`
 	Name       string `bson:"name"`
 
+	// optional
+	Desc   string   `bson:"desc"`
 	Ref    string   `bson:"ref"`
 	Images []string `bson:"images"`
 
-	Key        string   `bson:"key"`
-	KeyHistory []string `bson:"key_history"`
-
 	Created time.Time `bson:"created"`
 	Updated time.Time `bson:"updated"`
+
+	// not used for now
+	Key        string   `bson:"key"`
+	KeyHistory []string `bson:"key_history"`
 }
 
 func (i *Item) IsValid() bool {

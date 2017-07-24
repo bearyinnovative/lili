@@ -77,7 +77,7 @@ func fetchAndNotify(c CommandType) {
 		notifiedCount += 1
 
 		// notify
-		text := fmt.Sprintf("[NEW] %s (%s)", item.Desc, humanize.Time(item.Created))
+		text := fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
 		c.Notifier().Notify(text, item.Images)
 	}
 
