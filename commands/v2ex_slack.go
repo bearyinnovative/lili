@@ -11,8 +11,8 @@ type SlackV2EX struct {
 func NewSlackV2EX() *SlackV2EX {
 	return &SlackV2EX{
 		&BaseV2EX{
-			notifier: LiliNotifier,
-			Query:    "Slack",
+			notifiers: LiliNotifiers,
+			Query:     "Slack",
 		},
 	}
 }

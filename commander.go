@@ -78,7 +78,9 @@ func fetchAndNotify(c CommandType) {
 
 		// notify
 		text := fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
-		c.Notifier().Notify(text, item.Images)
+		for _, n := range c.Notifiers() {
+			n.Notify(text, item.Images)
+		}
 	}
 
 	log.Printf("[%s] fetched %d items, notified %d", c.Name(), len(items), notifiedCount)

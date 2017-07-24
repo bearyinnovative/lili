@@ -11,8 +11,8 @@ type SlackZhihu struct {
 func NewSlackZhihu() *SlackZhihu {
 	return &SlackZhihu{
 		&BaseZhihu{
-			notifier: LiliNotifier,
-			Query:    "Slack",
+			notifiers: LiliNotifiers,
+			Query:     "Slack",
 		},
 	}
 }

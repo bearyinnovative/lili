@@ -13,9 +13,9 @@ type RoCryInstagram struct {
 func NewRoCryInstagram() *RoCryInstagram {
 	return &RoCryInstagram{
 		&BaseInstagram{
-			notifier: DefaultUserNotifier("rocry"),
-			RootPath: "user",
-			ID:       "rocry",
+			notifiers: []NotifierType{DefaultUserNotifier("rocry")},
+			RootPath:  "user",
+			ID:        "rocry",
 			PathGenerator: func(token string) string {
 				return fmt.Sprintf("https://www.instagram.com/%s/?__a=1", "rocry")
 			},

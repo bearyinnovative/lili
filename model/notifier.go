@@ -9,12 +9,17 @@ import (
 	. "github.com/bearyinnovative/lili/util"
 )
 
-var LiliNotifier NotifierType
-var CatNotifier NotifierType
+var LiliNotifiers []NotifierType
+var CatNotifiers []NotifierType
 
 func init() {
-	LiliNotifier = DefaultChannelNotifier("不是真的lili")
-	CatNotifier = DefaultChannelNotifier("云养猫")
+	LiliNotifiers = []NotifierType{
+		DefaultChannelNotifier("不是真的lili"),
+	}
+
+	CatNotifiers = []NotifierType{
+		DefaultChannelNotifier("云养猫"),
+	}
 }
 
 type NotifierType interface {

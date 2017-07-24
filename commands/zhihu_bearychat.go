@@ -11,8 +11,8 @@ type BearyChatZhihu struct {
 func NewBearyChatZhihu() *BearyChatZhihu {
 	return &BearyChatZhihu{
 		&BaseZhihu{
-			notifier: LiliNotifier,
-			Query:    "BearyChat",
+			notifiers: LiliNotifiers,
+			Query:     "BearyChat",
 		},
 	}
 }

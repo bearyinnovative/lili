@@ -15,8 +15,8 @@ import (
 )
 
 type BaseZhihu struct {
-	notifier NotifierType
-	Query    string
+	notifiers []NotifierType
+	Query     string
 }
 
 func (c *BaseZhihu) Name() string {
@@ -27,8 +27,8 @@ func (c *BaseZhihu) Interval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BaseZhihu) Notifier() NotifierType {
-	return c.notifier
+func (c *BaseZhihu) Notifiers() []NotifierType {
+	return c.notifiers
 }
 
 func (z *BaseZhihu) Fetch() (results []*Item, err error) {

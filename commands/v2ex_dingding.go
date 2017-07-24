@@ -11,8 +11,8 @@ type DingDingV2EX struct {
 func NewDingDingV2EX() *DingDingV2EX {
 	return &DingDingV2EX{
 		&BaseV2EX{
-			notifier: LiliNotifier,
-			Query:    "钉钉",
+			notifiers: LiliNotifiers,
+			Query:     "钉钉",
 		},
 	}
 }

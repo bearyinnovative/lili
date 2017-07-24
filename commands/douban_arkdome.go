@@ -13,7 +13,7 @@ import (
 )
 
 type ArkDome struct {
-	notifier NotifierType
+	notifiers []NotifierType
 }
 
 func (c *ArkDome) Name() string {
@@ -24,13 +24,13 @@ func (c *ArkDome) Interval() time.Duration {
 	return time.Minute * 15
 }
 
-func (c *ArkDome) Notifier() NotifierType {
-	return c.notifier
+func (c *ArkDome) Notifiers() []NotifierType {
+	return c.notifiers
 }
 
 func NewArkDome() *ArkDome {
 	return &ArkDome{
-		notifier: CatNotifier,
+		notifiers: CatNotifiers,
 	}
 }
 

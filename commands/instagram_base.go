@@ -16,7 +16,7 @@ const (
 )
 
 type BaseInstagram struct {
-	notifier      NotifierType
+	notifiers     []NotifierType
 	ID            string
 	RootPath      string
 	PathGenerator func(string) string
@@ -30,8 +30,8 @@ func (c *BaseInstagram) Interval() time.Duration {
 	return time.Minute * 60
 }
 
-func (c *BaseInstagram) Notifier() NotifierType {
-	return c.notifier
+func (c *BaseInstagram) Notifiers() []NotifierType {
+	return c.notifiers
 }
 
 func (c *BaseInstagram) Fetch() (results []*Item, err error) {

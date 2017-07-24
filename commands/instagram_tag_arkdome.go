@@ -13,9 +13,9 @@ type ArkDomeInstagram2 struct {
 func NewArkDomeInstagram2() *ArkDomeInstagram2 {
 	return &ArkDomeInstagram2{
 		&BaseInstagram{
-			notifier: CatNotifier,
-			RootPath: "tag",
-			ID:       "tag-arkdome",
+			notifiers: CatNotifiers,
+			RootPath:  "tag",
+			ID:        "tag-arkdome",
 			PathGenerator: func(token string) string {
 				return fmt.Sprintf("https://www.instagram.com/explore/tags/%s/?__a=1", "arkdome")
 			},

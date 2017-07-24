@@ -13,8 +13,8 @@ import (
 )
 
 type BaseV2EX struct {
-	notifier NotifierType
-	Query    string
+	notifiers []NotifierType
+	Query     string
 }
 
 func (c *BaseV2EX) Name() string {
@@ -25,8 +25,8 @@ func (c *BaseV2EX) Interval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BaseV2EX) Notifier() NotifierType {
-	return c.notifier
+func (c *BaseV2EX) Notifiers() []NotifierType {
+	return c.notifiers
 }
 
 func (c *BaseV2EX) Fetch() (results []*Item, err error) {

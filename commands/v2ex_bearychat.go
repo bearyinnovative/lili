@@ -11,8 +11,8 @@ type BearyChatV2EX struct {
 func NewBearyChatV2EX() *BearyChatV2EX {
 	return &BearyChatV2EX{
 		&BaseV2EX{
-			notifier: LiliNotifier,
-			Query:    "BearyChat",
+			notifiers: LiliNotifiers,
+			Query:     "BearyChat",
 		},
 	}
 }
