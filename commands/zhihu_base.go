@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -86,6 +87,7 @@ func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 			dateStr := dateStrComps[len(dateStrComps)-1]
 			created, err = time.ParseInLocation("2006-01-02", dateStr, loc)
 			if LogIfErr(err) {
+				log.Println(h)
 				return nil, err
 			}
 		}
