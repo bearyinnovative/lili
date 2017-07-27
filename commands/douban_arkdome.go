@@ -91,7 +91,11 @@ func (c *ArkDome) Fetch() (results []*Item, err error) {
 
 		pics := []string{}
 		s.Find("span.group-pic").Find("img").Each(func(i2 int, s2 *goquery.Selection) {
-			pic := s2.AttrOr("src", "")
+			pic := s2.AttrOr("data-median-src", "")
+			if pic == "" {
+				pic = s2.AttrOr("src", "")
+			}
+
 			// fmt.Printf("pic %d: %s\n", i2, pic)
 			if pic != "" {
 				pics = append(pics, pic)
