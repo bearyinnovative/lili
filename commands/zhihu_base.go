@@ -78,6 +78,7 @@ func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 		var created time.Time
 		rawDateStr := doc.Find("a.time.text-muted").Text()
 		dateStrComps := strings.Split(rawDateStr, " ")
+
 		if len(dateStrComps) != 0 {
 			loc, err := time.LoadLocation("Local")
 			if LogIfErr(err) {
@@ -85,10 +86,30 @@ func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 			}
 
 			dateStr := dateStrComps[len(dateStrComps)-1]
-			created, err = time.ParseInLocation("2006-01-02", dateStr, loc)
-			if LogIfErr(err) {
-				log.Println(h)
-				return nil, err
+			if len(dateStrComps) == 2 {
+				// "发布于 2016-06-22"
+				created, err = time.ParseInLocation("2006-01-02", dateStr, loc)
+				if err != nil {
+					// "发布于 17:50"
+					created, err = time.ParseInLocation("15:04", dateStr, loc)
+					if LogIfErr(err) {
+						log.Println(h)
+						return nil, err
+					}
+
+					now := time.Now()
+					created = created.AddDate(now.Year(), int(now.Month())-1, now.Day()-1)
+				}
+			} else if len(dateStrComps) == 3 && dateStrComps[1] == "昨天" {
+				// "发布于 昨天 17:50"
+				created, err = time.ParseInLocation("15:04", dateStr, loc)
+				if LogIfErr(err) {
+					log.Println(h)
+					return nil, err
+				}
+
+				now := time.Now()
+				created = created.AddDate(now.Year(), int(now.Month())-1, now.Day()-1-1)
 			}
 		}
 
