@@ -14,6 +14,8 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
+		NewHackerNewsSlack(),
+		NewHackerNewsAll(),
 		NewMatsumotooooooInstagram(),
 		NewDabieCatInstagram(),
 		NewArkDomeInstagram(),
@@ -53,7 +55,7 @@ func start(c CommandType) {
 
 func fetchAndNotify(c CommandType) {
 	items, err := c.Fetch()
-	if err != nil || len(items) == 0 {
+	if err != nil {
 		return
 	}
 
