@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -13,17 +12,17 @@ import (
 )
 
 type BaseHackerNews struct {
-	notifiers []NotifierType
-	keyword   string
+	notifiers    []NotifierType
+	name         string
+	shouldNotify func(*HNItem) bool
 }
 
 func (c *BaseHackerNews) Name() string {
-	// c.keyword == "" means fetch all
-	return "hackernews-" + c.keyword
+	return "hackernews-" + c.name
 }
 
 func (c *BaseHackerNews) Interval() time.Duration {
-	return time.Minute * 60
+	return time.Minute * 15
 }
 
 func (c *BaseHackerNews) Notifiers() []NotifierType {
@@ -83,15 +82,15 @@ func (c *BaseHackerNews) Fetch() (results []*Item, err error) {
 	wg := new(sync.WaitGroup)
 
 	// 30 for first page
-	for _, id := range ids[:30] {
+	for idx, id := range ids[:30] {
 		wg.Add(1)
-		go func(id int) {
-			item := c.getItem(client, id)
+		go func(idx, id int) {
+			item := c.getItem(client, idx, id)
 			if item != nil {
 				ch <- item
 			}
 			wg.Done()
-		}(id)
+		}(idx, id)
 	}
 
 	go func() {
@@ -106,7 +105,7 @@ func (c *BaseHackerNews) Fetch() (results []*Item, err error) {
 	return
 }
 
-func (c *BaseHackerNews) getItem(client *http.Client, id int) *Item {
+func (c *BaseHackerNews) getItem(client *http.Client, idx, id int) *Item {
 	// Create request
 	path := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", id)
 	req, err := http.NewRequest("GET", path, nil)
@@ -126,7 +125,7 @@ func (c *BaseHackerNews) getItem(client *http.Client, id int) *Item {
 		return nil
 	}
 
-	if !strings.Contains(hnItem.Title, c.keyword) {
+	if !c.shouldNotify(&hnItem) {
 		return nil
 	}
 
@@ -135,10 +134,10 @@ func (c *BaseHackerNews) getItem(client *http.Client, id int) *Item {
 	}
 
 	commentPath := fmt.Sprintf("https://news.ycombinator.com/item?id=%d", hnItem.ID)
-	desc := fmt.Sprintf("[%s](%s)\n%d/[%d](%s)", hnItem.Title, hnItem.URL, hnItem.Score, hnItem.Comments, commentPath)
+	desc := fmt.Sprintf("[%s](%s)\nrank: %d, %d/[%d](%s)", hnItem.Title, hnItem.URL, idx, hnItem.Score, hnItem.Comments, commentPath)
 	return &Item{
 		Name:       c.Name(),
-		Identifier: fmt.Sprintf("hn_%d", hnItem.ID),
+		Identifier: fmt.Sprintf("hn_%s_%d", c.name, hnItem.ID),
 		Desc:       desc,
 		Ref:        hnItem.URL,
 		Created:    time.Unix(int64(hnItem.Time), 0),

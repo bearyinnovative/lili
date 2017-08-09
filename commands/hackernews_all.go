@@ -10,7 +10,14 @@ func NewHackerNewsAll() *HackerNewsAll {
 	return &HackerNewsAll{
 		&BaseHackerNews{
 			notifiers: []NotifierType{DefaultUserNotifier("rocry")},
-			keyword:   "",
+			name:      "rocry",
+			shouldNotify: func(item *HNItem) bool {
+				if item.Score < 50 || item.Comments < 5 {
+					return false
+				}
+
+				return true
+			},
 		},
 	}
 }
