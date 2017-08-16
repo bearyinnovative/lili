@@ -22,9 +22,14 @@ func RunCommander() {
 		NewArkDomeInstagram2(),
 		NewRoCryInstagram(),
 		NewArkDome(),
+
+		NewIMessageZhihu(),
+		NewTelegramZhihu(),
+		NewWhatsAppZhihu(),
 		NewBearyChatZhihu(),
 		NewDingDingZhihu(),
 		NewSlackZhihu(),
+
 		NewBearyChatV2EX(),
 		NewDingDingV2EX(),
 		NewSlackV2EX(),
