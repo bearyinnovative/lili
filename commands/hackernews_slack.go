@@ -16,8 +16,20 @@ func NewHackerNewsSlack() *HackerNewsSlack {
 			notifiers: LiliNotifiers,
 			name:      "slack",
 			shouldNotify: func(item *HNItem) bool {
-				return strings.Contains(strings.ToLower(item.Title), "slack")
+				return checkContains(item.Title, []string{"slack", "telegram", "whatsapp"})
 			},
 		},
 	}
+}
+
+func checkContains(title string, keywords []string) bool {
+	lowerTitle := strings.ToLower(title)
+
+	for _, key := range keywords {
+		if strings.Contains(lowerTitle, key) {
+			return true
+		}
+	}
+
+	return false
 }
