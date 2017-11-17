@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	. "github.com/bearyinnovative/lili/commands"
+	. "github.com/bearyinnovative/lili/commands/house"
 	. "github.com/bearyinnovative/lili/model"
 	. "github.com/bearyinnovative/lili/util"
 
@@ -14,25 +14,26 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
-		NewHackerNewsSlack(),
-		NewHackerNewsAll(),
-		NewMatsumotooooooInstagram(),
-		NewDabieCatInstagram(),
-		NewArkDomeInstagram(),
-		NewArkDomeInstagram2(),
-		NewRoCryInstagram(),
-		NewArkDomeV2(),
+		NewHouseDealShenZhen(),
+		// NewHackerNewsSlack(),
+		// NewHackerNewsAll(),
+		// NewMatsumotooooooInstagram(),
+		// NewDabieCatInstagram(),
+		// NewArkDomeInstagram(),
+		// NewArkDomeInstagram2(),
+		// NewRoCryInstagram(),
+		// NewArkDomeV2(),
 
-		NewIMessageZhihu(),
-		NewTelegramZhihu(),
-		NewWhatsAppZhihu(),
-		NewBearyChatZhihu(),
-		NewDingDingZhihu(),
-		NewSlackZhihu(),
+		// NewIMessageZhihu(),
+		// NewTelegramZhihu(),
+		// NewWhatsAppZhihu(),
+		// NewBearyChatZhihu(),
+		// NewDingDingZhihu(),
+		// NewSlackZhihu(),
 
-		NewBearyChatV2EX(),
-		NewDingDingV2EX(),
-		NewSlackV2EX(),
+		// NewBearyChatV2EX(),
+		// NewDingDingV2EX(),
+		// NewSlackV2EX(),
 	}
 
 	for i := 0; i < len(cmds); i++ {
