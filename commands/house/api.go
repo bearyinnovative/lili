@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"sort"
@@ -61,10 +62,12 @@ func sendList() {
 	fmt.Println("response Body : ", string(respBody))
 }
 
-func FetchDeals(cityId, offset, limit int) (items []*DealItem, err error) {
+func FetchDeals(cityId, offset, limit int) (result *DealResponse, err error) {
 	path := fmt.Sprintf(
 		"https://app.api.lianjia.com/house/chengjiao/search?city_id=%d&limit_offset=%d&limit_count=%d",
 		cityId, offset, limit)
+
+	log.Println("fetching", path)
 
 	// Create request
 	req, err := makeCommonGetRequest(path)
@@ -85,8 +88,6 @@ func FetchDeals(cityId, offset, limit int) (items []*DealItem, err error) {
 	// fmt.Println("response Headers : ", resp.Header)
 	// fmt.Println("response Body : ", string(respBody))
 
-	var result *DealResponse
-
 	decoder := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 
@@ -95,7 +96,6 @@ func FetchDeals(cityId, offset, limit int) (items []*DealItem, err error) {
 		return
 	}
 
-	items = result.Data.List
 	return
 }
 

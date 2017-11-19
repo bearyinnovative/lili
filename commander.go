@@ -14,7 +14,35 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
+		NewHouseDealBeiJing(),
+		NewHouseDealShangHai(),
+		NewHouseDealGuangZhou(),
 		NewHouseDealShenZhen(),
+		NewHouseDealTJ(),
+		NewHouseDealCD(),
+		NewHouseDealNJ(),
+		NewHouseDealHZ(),
+		NewHouseDealQD(),
+		NewHouseDealDL(),
+		NewHouseDealXM(),
+		NewHouseDealWH(),
+		NewHouseDealCQ(),
+		NewHouseDealCS(),
+		NewHouseDealXA(),
+		NewHouseDealJN(),
+		NewHouseDealSJZ(),
+		NewHouseDealDG(),
+		NewHouseDealFS(),
+		NewHouseDealHF(),
+		NewHouseDealYT(),
+		NewHouseDealZS(),
+		NewHouseDealZH(),
+		NewHouseDealSY(),
+		NewHouseDealS(),
+		NewHouseDealLF(),
+		NewHouseDealTY(),
+		NewHouseDealHUI(),
+
 		// NewHackerNewsSlack(),
 		// NewHackerNewsAll(),
 		// NewMatsumotooooooInstagram(),
@@ -48,7 +76,9 @@ func RunCommander() {
 
 func start(c CommandType) {
 	// trigger once
-	fetchAndNotify(c)
+	go func() {
+		fetchAndNotify(c)
+	}()
 
 	ticker := time.NewTicker(c.Interval())
 	// schedule run

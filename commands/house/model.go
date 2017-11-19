@@ -51,6 +51,6 @@ var houseNotifiers []NotifierType
 
 func init() {
 	houseNotifiers = []NotifierType{
-		DefaultUserNotifier("rocry"),
+	// DefaultUserNotifier("rocry"),
 	}
 }
