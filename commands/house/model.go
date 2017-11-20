@@ -45,12 +45,13 @@ type DealItem struct {
 	RequireLogin        int     `json:"require_login"`
 
 	FetchedAt time.Time
+	CityId    int
 }
 
 var houseNotifiers []NotifierType
 
 func init() {
 	houseNotifiers = []NotifierType{
-	// DefaultUserNotifier("rocry"),
+		DefaultChannelNotifier("house_info"),
 	}
 }
