@@ -8,6 +8,7 @@ import (
 	"time"
 
 	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/notifier"
 	. "github.com/bearyinnovative/lili/util"
 )
 

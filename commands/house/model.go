@@ -4,6 +4,7 @@ import (
 	"time"
 
 	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/notifier"
 )
 
 type DealResponse struct {
@@ -52,6 +53,6 @@ var houseNotifiers []NotifierType
 
 func init() {
 	houseNotifiers = []NotifierType{
-		DefaultChannelNotifier("house_info"),
+		BCChannelNotifier("house_info"),
 	}
 }

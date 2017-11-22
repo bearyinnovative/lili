@@ -1,4 +1,4 @@
-package model
+package bearychat
 
 import (
 	"bytes"
@@ -9,44 +9,11 @@ import (
 	. "github.com/bearyinnovative/lili/util"
 )
 
-var LiliNotifiers []NotifierType
-var CatNotifiers []NotifierType
-
-func init() {
-	LiliNotifiers = []NotifierType{
-		DefaultChannelNotifier("不是真的lili"),
-	}
-
-	CatNotifiers = []NotifierType{
-		DefaultChannelNotifier("云养猫"),
-	}
-}
-
-type NotifierType interface {
-	Notify(text string, images []string)
-}
-
-type BCIncommingNotifier struct {
+type IncomingNotifier struct {
 	Domain    string
 	Token     string
 	ToUser    string
 	ToChannel string
-}
-
-func DefaultChannelNotifier(to string) NotifierType {
-	return &BCIncommingNotifier{
-		Domain:    "=bw52O",
-		Token:     "08c0d225efc37cb33d31d089b91233d1",
-		ToChannel: to,
-	}
-}
-
-func DefaultUserNotifier(to string) NotifierType {
-	return &BCIncommingNotifier{
-		Domain: "=bw52O",
-		Token:  "08c0d225efc37cb33d31d089b91233d1",
-		ToUser: to,
-	}
 }
 
 /*
@@ -66,17 +33,17 @@ func DefaultUserNotifier(to string) NotifierType {
     ]
 }
 */
-func (bc *BCIncommingNotifier) Notify(text string, images []string) {
-	path := fmt.Sprintf("https://hook.bearychat.com/%s/incoming/%s", bc.Domain, bc.Token)
+func (n *IncomingNotifier) Notify(text string, images []string) {
+	path := fmt.Sprintf("https://hook.bearychat.com/%s/incoming/%s", n.Domain, n.Token)
 
 	dic := map[string]interface{}{
 		"text": text,
 	}
-	if bc.ToUser != "" {
-		dic["user"] = bc.ToUser
+	if n.ToUser != "" {
+		dic["user"] = n.ToUser
 	}
-	if bc.ToChannel != "" {
-		dic["channel"] = bc.ToChannel
+	if n.ToChannel != "" {
+		dic["channel"] = n.ToChannel
 	}
 
 	if len(images) > 0 {

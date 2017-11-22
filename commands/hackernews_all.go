@@ -1,6 +1,9 @@
 package commands
 
-import . "github.com/bearyinnovative/lili/model"
+import (
+	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/notifier"
+)
 
 type HackerNewsAll struct {
 	*BaseHackerNews
@@ -9,7 +12,7 @@ type HackerNewsAll struct {
 func NewHackerNewsAll() *HackerNewsAll {
 	return &HackerNewsAll{
 		&BaseHackerNews{
-			notifiers: []NotifierType{DefaultChannelNotifier("rocry_news")},
+			notifiers: []NotifierType{BCChannelNotifier("rocry_news")},
 			name:      "rocry",
 			shouldNotify: func(item *HNItem) bool {
 				if item.Score < 50 || item.Comments < 5 {

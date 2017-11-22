@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	. "github.com/bearyinnovative/lili/model"
+	. "github.com/bearyinnovative/lili/notifier"
 )
 
 type RoCryInstagram struct {
@@ -13,7 +14,7 @@ type RoCryInstagram struct {
 func NewRoCryInstagram() *RoCryInstagram {
 	return &RoCryInstagram{
 		&BaseInstagram{
-			notifiers: []NotifierType{DefaultUserNotifier("rocry")},
+			notifiers: []NotifierType{BCUserNotifier("rocry")},
 			RootPath:  "user",
 			ID:        "rocry",
 			PathGenerator: func(token string) string {

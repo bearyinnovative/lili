@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	. "github.com/bearyinnovative/lili/notifier"
 )
 
 type CommandType interface {
