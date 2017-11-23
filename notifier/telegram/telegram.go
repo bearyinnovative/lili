@@ -37,9 +37,9 @@ func (n *Notifier) Notify(text string, images []string) error {
 		})
 	} else {
 		return n.send("sendMessage", map[string]interface{}{
-			"text":       text,
-			"chat_id":    n.ChatID,
-			"parse_mode": "Markdown",
+			"text":    text,
+			"chat_id": n.ChatID,
+			// "parse_mode": "Markdown",
 		})
 	}
 }
