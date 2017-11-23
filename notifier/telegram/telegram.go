@@ -12,7 +12,7 @@ type Notifier struct {
 	ChatID int
 }
 
-func (n *Notifier) Notify(text string, images []string) {
+func (n *Notifier) Notify(text string, images []string) error {
 	imageCount := len(images)
 
 	if imageCount > 1 {
@@ -24,19 +24,19 @@ func (n *Notifier) Notify(text string, images []string) {
 				"caption": text,
 			}
 		}
-		n.send("sendMediaGroup", map[string]interface{}{
+		return n.send("sendMediaGroup", map[string]interface{}{
 			"caption": text,
 			"chat_id": n.ChatID,
 			"media":   mediaPhotos,
 		})
 	} else if imageCount == 1 {
-		n.send("sendPhoto", map[string]interface{}{
+		return n.send("sendPhoto", map[string]interface{}{
 			"caption": text,
 			"chat_id": n.ChatID,
 			"photo":   images[0],
 		})
 	} else {
-		n.send("sendMessage", map[string]interface{}{
+		return n.send("sendMessage", map[string]interface{}{
 			"text":       text,
 			"chat_id":    n.ChatID,
 			"parse_mode": "Markdown",

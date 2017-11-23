@@ -118,7 +118,8 @@ func fetchAndNotify(c CommandType) {
 		// notify
 		text := fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
 		for _, n := range c.Notifiers() {
-			n.Notify(text, item.Images)
+			err = n.Notify(text, item.Images)
+			LogIfErr(err)
 		}
 	}
 

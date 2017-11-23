@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	. "github.com/bearyinnovative/lili/util"
 )
 
 type IncomingNotifier struct {
@@ -33,7 +31,7 @@ type IncomingNotifier struct {
     ]
 }
 */
-func (n *IncomingNotifier) Notify(text string, images []string) {
+func (n *IncomingNotifier) Notify(text string, images []string) error {
 	path := fmt.Sprintf("https://hook.bearychat.com/%s/incoming/%s", n.Domain, n.Token)
 
 	dic := map[string]interface{}{
@@ -61,16 +59,23 @@ func (n *IncomingNotifier) Notify(text string, images []string) {
 	}
 
 	jsonValue, err := json.Marshal(dic)
-	// Log("jsonValue:", string(jsonValue))
-	FatalIfErr(err)
+	if err != nil {
+		return err
+	}
 
 	body := bytes.NewBuffer(jsonValue)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", path, body)
-	FatalIfErr(err)
+	if err != nil {
+		return err
+	}
 
-	req.Header.Add("Content-Type", "application/json; charset=utf-8")
+	req.Header.Add("Content-Type", "application/json")
 	_, err = client.Do(req)
-	LogIfErr(err)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
