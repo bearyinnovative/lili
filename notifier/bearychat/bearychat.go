@@ -3,6 +3,7 @@ package bearychat
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -72,9 +73,13 @@ func (n *IncomingNotifier) Notify(text string, images []string) error {
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	_, err = client.Do(req)
+	resp, err = client.Do(req)
 	if err != nil {
 		return err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return errors.New(fmt.Sprintf("status code error: %d", resp.StatusCode))
 	}
 
 	return nil
