@@ -12,8 +12,9 @@ type Item struct {
 	Ref    string   `bson:"ref"`
 	Images []string `bson:"images"`
 
-	Created time.Time `bson:"created"`
-	Updated time.Time `bson:"updated"`
+	Created    time.Time `bson:"created"`
+	Updated    time.Time `bson:"updated"`
+	NotifiedAt time.Time `bson:"notified_at"`
 
 	// not used for now
 	Key        string   `bson:"key"`

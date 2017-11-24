@@ -17,6 +17,7 @@ var DBContext DatabaseType
 type DatabaseType interface {
 	// return created, error
 	UpsertItem(*Item) (bool, error)
+	MarkNotified(*Item) error
 }
 
 type Database struct {
@@ -95,4 +96,12 @@ func (db *Database) UpsertItem(h *Item) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func (db *Database) MarkNotified(item *Item) error {
+	query := bson.M{
+		"identifier": item.Identifier,
+	}
+
+	return db.itemColl.Update(query, bson.M{"$set": bson.M{"notified_at": time.Now()}})
 }

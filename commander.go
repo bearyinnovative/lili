@@ -120,6 +120,10 @@ func fetchAndNotify(c CommandType) {
 		for _, n := range c.Notifiers() {
 			err = n.Notify(text, item.Images)
 			LogIfErr(err)
+			if err == nil {
+				err = DBContext.MarkNotified(item)
+				LogIfErr(err)
+			}
 		}
 	}
 
