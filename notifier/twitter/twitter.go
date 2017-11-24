@@ -1,6 +1,8 @@
 package twitter
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/dghubble/go-twitter/twitter"
@@ -26,6 +28,11 @@ func (n *Notifier) Notify(text string, images []string) error {
 	if len(images) > 0 {
 		text += "\n" + strings.Join(images, "\n")
 	}
-	_, _, err := client.Statuses.Update(text, nil)
+	_, resp, err := client.Statuses.Update(text, nil)
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return errors.New(fmt.Sprintf("status code error: %d", resp.StatusCode))
+	}
+
 	return err
 }
