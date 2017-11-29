@@ -53,6 +53,7 @@ func init() {
 type BaseHouseDeal struct {
 	cityName      string
 	cityShortName string
+	notifiers     []NotifierType
 }
 
 func (c *BaseHouseDeal) Name() string {
@@ -64,7 +65,7 @@ func (c *BaseHouseDeal) Interval() time.Duration {
 }
 
 func (c *BaseHouseDeal) Notifiers() []NotifierType {
-	return houseNotifiers
+	return c.notifiers
 }
 
 func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
@@ -114,6 +115,11 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 
 			createdCount += 1
 
+			if len(c.notifiers) == 0 {
+				continue
+			}
+
+			// start create notify item
 			var images []string = nil
 			if di.CoverPic != "" {
 				images = []string{di.CoverPic}

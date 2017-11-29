@@ -49,10 +49,10 @@ type DealItem struct {
 	CityId    int
 }
 
-var houseNotifiers []NotifierType
+var szHouseNotifiers []NotifierType
 
 func init() {
-	houseNotifiers = []NotifierType{
+	szHouseNotifiers = []NotifierType{
 		BCChannelNotifier("house_info"),
 	}
 }
