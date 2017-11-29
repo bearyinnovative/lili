@@ -1,6 +1,10 @@
 package bearychat
 
-import bc "github.com/bearyinnovative/bearychat-go"
+import (
+	"log"
+
+	bc "github.com/bearyinnovative/bearychat-go"
+)
 
 type RTMNotifier struct {
 	context      *bc.RTMContext
@@ -31,6 +35,23 @@ func (n *RTMNotifier) Notify(text string, images []string) error {
 
 	dic["vchannel_id"] = n.ToVChannelID
 	dic["type"] = "message"
+
+	// TODO: this doesn't work for now
+	if len(images) > 0 {
+		imagesArr := []interface{}{}
+		for _, img := range images {
+			imagesArr = append(imagesArr, map[string]string{
+				"url": img,
+			})
+		}
+		dic["attachments"] = []interface{}{
+			map[string]interface{}{
+				"images": imagesArr,
+			},
+		}
+	}
+
+	log.Println(dic)
 
 	err := n.context.Loop.Send(dic)
 	if err != nil {

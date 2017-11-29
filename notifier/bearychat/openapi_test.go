@@ -8,7 +8,10 @@ func TestSendOpenAPI(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = n.Notify("hello open api", nil)
+	err = n.Notify("hello open api", []string{
+		"https://avatars1.githubusercontent.com/u/1117026?s=40&v=4",
+		"https://avatars1.githubusercontent.com/u/1117026?s=40&v=4",
+	})
 	if err != nil {
 		t.Error(err)
 	}

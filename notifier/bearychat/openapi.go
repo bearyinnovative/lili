@@ -21,10 +21,18 @@ func NewOpenAPINotifier(token, vid string) (*OpenAPINotifier, error) {
 }
 
 func (n *OpenAPINotifier) Notify(text string, images []string) error {
+	var attachment bc.MessageAttachment
+	if len(images) > 0 {
+		attachment.Images = []bc.MessageAttachmentImage{}
+		for _, img := range images {
+			attachment.Images = append(attachment.Images, bc.MessageAttachmentImage{&img})
+		}
+	}
+
 	opt := &bc.MessageCreateOptions{
 		VChannelID:  n.ToVChannelID,
 		Text:        text,
-		Attachments: nil,
+		Attachments: []bc.MessageAttachment{attachment},
 	}
 
 	n.client.Message.Create(context.TODO(), opt)
