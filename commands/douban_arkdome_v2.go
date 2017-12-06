@@ -40,7 +40,7 @@ func (c *ArkDomeV2) Fetch() (results []*Item, err error) {
 	client := &http.Client{}
 
 	// Create request
-	req, err := http.NewRequest("GET", "https://frodo.douban.com/api/v2/status/user_timeline/144859503?count=15&os_rom=miui6&apikey=0dad551ec0f84ed02907ff5c42e8ec70&channel=Google_Market&udid=8f7b52865761deac6d547c8d415ed0a079704517&_sig=xA%2F56W6u7Yca1iIgMkXS3NO6Y9A%3D&_ts=1510883310", nil)
+	req, err := http.NewRequest("GET", "https://frodo.douban.com/api/v2/status/user_timeline/144859503?count=15&os_rom=miui6&apikey=0dad551ec0f84ed02907ff5c42e8ec70&channel=Google_Market&udid=8f7b52865761deac6d547c8d415ed0a079704517", nil)
 	if LogIfErr(err) {
 		return
 	}
@@ -49,8 +49,8 @@ func (c *ArkDomeV2) Fetch() (results []*Item, err error) {
 	req.Header.Add("Host", "frodo.douban.com")
 	req.Header.Add("Connection", "Keep-Alive")
 	// req.Header.Add("Accept-Encoding", "gzip")
-	req.Header.Add("Authorization", "Bearer b32def9cc871eee91989ced65955ccbb")
-	req.Header.Add("Cookie", "bid=SUoRzbOvT3U")
+	// req.Header.Add("Authorization", "Bearer b32def9cc871eee91989ced65955ccbb")
+	// req.Header.Add("Cookie", "bid=SUoRzbOvT3U")
 	req.Header.Add("User-Agent", "api-client/1 com.douban.frodo/5.11.0(114) Android/25 product/sagit vendor/Xiaomi model/MI 6  rom/miui6  network/wifi")
 
 	err = req.ParseForm()
