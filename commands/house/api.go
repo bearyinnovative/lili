@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -32,34 +31,6 @@ func init() {
 	client = &http.Client{
 	// Transport: tr,
 	}
-}
-
-// just for test
-func sendList() {
-	// 成交 list (GET https://app.api.lianjia.com/house/chengjiao/search?city_id=440300&limit_offset=0&limit_count=20&request_ts=1510299565)
-
-	// Create request
-	req, err := makeCommonGetRequest("https://app.api.lianjia.com/house/chengjiao/search?city_id=440300&limit_offset=0&limit_count=100")
-	if LogIfErr(err) {
-		return
-	}
-
-	fmt.Println(req)
-
-	// Fetch Request
-	resp, err := client.Do(req)
-
-	if err != nil {
-		fmt.Println("Failure : ", err)
-	}
-
-	// Read Response Body
-	respBody, _ := ioutil.ReadAll(resp.Body)
-
-	// Display Results
-	fmt.Println("response Status : ", resp.Status)
-	fmt.Println("response Headers : ", resp.Header)
-	fmt.Println("response Body : ", string(respBody))
 }
 
 func FetchDeals(cityId, offset, limit int) (result *DealResponse, err error) {
