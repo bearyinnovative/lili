@@ -2,6 +2,7 @@ package house
 
 import (
 	"errors"
+	"log"
 	"os"
 	"time"
 
@@ -18,6 +19,7 @@ func init() {
 	if mongoServer == "" {
 		mongoServer = "localhost"
 	}
+	log.Println("house before dial:", mongoServer)
 	session, err := mgo.Dial(mongoServer)
 	if LogIfErr(err) {
 		panic(err)
@@ -29,7 +31,7 @@ func init() {
 
 	dealCollection = session.DB("house").C("deals")
 
-	// log.Println("mongo setup success")
+	log.Println("house mongo setup success")
 }
 
 func UpsertDeal(d *DealItem) (bool, error) {

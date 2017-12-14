@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"os"
 	"time"
 
@@ -29,6 +30,7 @@ func init() {
 	if mongoServer == "" {
 		mongoServer = "localhost"
 	}
+	log.Println("db before dial:", mongoServer)
 	session, err := mgo.Dial(mongoServer)
 	if LogIfErr(err) {
 		panic(err)
@@ -42,7 +44,7 @@ func init() {
 		itemColl: session.DB("lili").C("items"),
 	}
 
-	// log.Println("mongo setup success")
+	log.Println("mongo setup success")
 }
 
 func (db *Database) UpsertItem(h *Item) (bool, error) {
