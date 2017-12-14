@@ -2,3 +2,5 @@ _history
 lili
 vendor/*/
 build
+init_mongodb/mongo_backup
+.env
