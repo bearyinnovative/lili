@@ -6,7 +6,7 @@ import (
 	"time"
 
 	. "github.com/bearyinnovative/lili/commands"
-	. "github.com/bearyinnovative/lili/commands/house"
+	"github.com/bearyinnovative/lili/commands/house"
 	. "github.com/bearyinnovative/lili/model"
 	. "github.com/bearyinnovative/lili/util"
 
@@ -17,26 +17,18 @@ func RunCommander() {
 	cmds := []CommandType{
 		NewHackerNewsSlack(),
 		NewHackerNewsAll(),
+
 		NewMatsumotooooooInstagram(),
 		NewDabieCatInstagram(),
 		NewArkDomeInstagram(),
 		NewArkDomeInstagram2(),
 		NewRoCryInstagram(),
 		NewArkDomeV2(),
-
-		NewIMessageZhihu(),
-		NewTelegramZhihu(),
-		NewWhatsAppZhihu(),
-		NewBearyChatZhihu(),
-		NewDingDingZhihu(),
-		NewSlackZhihu(),
-
-		NewBearyChatV2EX(),
-		NewDingDingV2EX(),
-		NewSlackV2EX(),
 	}
 
-	cmds = append(cmds, DealCommands...)
+	cmds = append(cmds, house.GetAllDealCommands()...)
+	cmds = append(cmds, GetAllZhihuCommands()...)
+	cmds = append(cmds, GetAllV2EXCommands()...)
 
 	for i := 0; i < len(cmds); i++ {
 		// fmt.Printf("%+v\n", cmds[i])

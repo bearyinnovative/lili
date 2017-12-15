@@ -7,9 +7,7 @@ import (
 	. "github.com/bearyinnovative/lili/util"
 )
 
-var DealCommands []CommandType
-
-func init() {
+func GetAllDealCommands() (results []CommandType) {
 	data := [][]string{
 		[]string{"北京", "bj"},
 		[]string{"上海", "sh"},
@@ -47,10 +45,12 @@ func init() {
 			notifiers = szNotifiers()
 		}
 
-		DealCommands = append(DealCommands, &BaseHouseDeal{
+		results = append(results, &BaseHouseDeal{
 			d[0], d[1], notifiers,
 		})
 	}
+
+	return
 }
 
 func szNotifiers() []NotifierType {
