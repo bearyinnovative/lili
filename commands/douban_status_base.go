@@ -11,36 +11,32 @@ import (
 	. "github.com/bearyinnovative/lili/util"
 )
 
-type ArkDomeV2 struct {
+type DoubanStatus struct {
+	ID        string
 	notifiers []NotifierType
 }
 
-func (c *ArkDomeV2) Name() string {
-	return "arkdome-douban-v2"
+func (c *DoubanStatus) Name() string {
+	return "douban-status-" + c.ID
 }
 
-func (c *ArkDomeV2) Interval() time.Duration {
+func (c *DoubanStatus) Interval() time.Duration {
 	return time.Minute * 15
 }
 
-func (c *ArkDomeV2) Notifiers() []NotifierType {
+func (c *DoubanStatus) Notifiers() []NotifierType {
 	return c.notifiers
 }
 
-func NewArkDomeV2() *ArkDomeV2 {
-	return &ArkDomeV2{
-		notifiers: CatNotifiers,
-	}
-}
-
-func (c *ArkDomeV2) Fetch() (results []*Item, err error) {
+func (c *DoubanStatus) Fetch() (results []*Item, err error) {
 	// https://frodo.douban.com/api/v2/status/user_timeline/144859503 (GET https://frodo.douban.com/api/v2/status/user_timeline/144859503?count=15&os_rom=miui6&apikey=0dad551ec0f84ed02907ff5c42e8ec70&channel=Google_Market&udid=8f7b52865761deac6d547c8d415ed0a079704517&_sig=xA%2F56W6u7Yca1iIgMkXS3NO6Y9A%3D&_ts=1510883310)
 
 	// Create client
 	client := &http.Client{}
 
 	// Create request
-	req, err := http.NewRequest("GET", "https://frodo.douban.com/api/v2/status/user_timeline/144859503?count=15&os_rom=miui6&apikey=0dad551ec0f84ed02907ff5c42e8ec70&channel=Google_Market&udid=8f7b52865761deac6d547c8d415ed0a079704517", nil)
+	path := fmt.Sprintf("https://frodo.douban.com/api/v2/status/user_timeline/%s?count=15&os_rom=miui6&apikey=0dad551ec0f84ed02907ff5c42e8ec70&channel=Google_Market&udid=8f7b52865761deac6d547c8d415ed0a079704517", c.ID)
+	req, err := http.NewRequest("GET", path, nil)
 	if LogIfErr(err) {
 		return
 	}
@@ -48,9 +44,6 @@ func (c *ArkDomeV2) Fetch() (results []*Item, err error) {
 	// Headers
 	req.Header.Add("Host", "frodo.douban.com")
 	req.Header.Add("Connection", "Keep-Alive")
-	// req.Header.Add("Accept-Encoding", "gzip")
-	// req.Header.Add("Authorization", "Bearer b32def9cc871eee91989ced65955ccbb")
-	// req.Header.Add("Cookie", "bid=SUoRzbOvT3U")
 	req.Header.Add("User-Agent", "api-client/1 com.douban.frodo/5.11.0(114) Android/25 product/sagit vendor/Xiaomi model/MI 6  rom/miui6  network/wifi")
 
 	err = req.ParseForm()
@@ -109,7 +102,7 @@ func (c *ArkDomeV2) Fetch() (results []*Item, err error) {
 
 		item := &Item{
 			Name:       c.Name(),
-			Identifier: "ad_douban_v2_" + realIt.ID,
+			Identifier: c.Name() + "-" + realIt.ID,
 			Desc:       fmt.Sprintf("%s [Link](%s)", text, realIt.SharingURL),
 			Ref:        realIt.SharingURL,
 			Created:    created,

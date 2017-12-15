@@ -17,14 +17,13 @@ func RunCommander() {
 	cmds := []CommandType{
 		NewHackerNewsSlack(),
 		NewHackerNewsAll(),
-
-		NewArkDomeV2(),
 	}
 
 	cmds = append(cmds, house.GetAllDealCommands()...)
 	cmds = append(cmds, GetAllZhihuCommands()...)
 	cmds = append(cmds, GetAllV2EXCommands()...)
 	cmds = append(cmds, GetAllInstagramCommands()...)
+	cmds = append(cmds, ArkdomeDoubanStatus)
 
 	for i := 0; i < len(cmds); i++ {
 		// fmt.Printf("%+v\n", cmds[i])
