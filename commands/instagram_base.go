@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,26 +17,48 @@ const (
 	token = "4163129.01dbb7e.8666598be3004da1b509c24bbd57336f"
 )
 
-type BaseInstagram struct {
+func NewTagInstagram(notifiers []NotifierType, tag string) CommandType {
+	return &baseInstagram{
+		notifiers: notifiers,
+		RootPath:  "tag",
+		ID:        "tag-" + tag,
+		PathGenerator: func(token string) string {
+			return fmt.Sprintf("https://www.instagram.com/explore/tags/%s/?__a=1", tag)
+		},
+	}
+}
+
+func NewUserInstagram(notifiers []NotifierType, username string) CommandType {
+	return &baseInstagram{
+		notifiers: notifiers,
+		RootPath:  "user",
+		ID:        username,
+		PathGenerator: func(token string) string {
+			return fmt.Sprintf("https://www.instagram.com/%s/?__a=1", username)
+		},
+	}
+}
+
+type baseInstagram struct {
 	notifiers     []NotifierType
 	ID            string
 	RootPath      string
 	PathGenerator func(string) string
 }
 
-func (c *BaseInstagram) Name() string {
+func (c *baseInstagram) Name() string {
 	return "instagram-" + c.ID
 }
 
-func (c *BaseInstagram) Interval() time.Duration {
+func (c *baseInstagram) Interval() time.Duration {
 	return time.Minute * 60
 }
 
-func (c *BaseInstagram) Notifiers() []NotifierType {
+func (c *baseInstagram) Notifiers() []NotifierType {
 	return c.notifiers
 }
 
-func (c *BaseInstagram) Fetch() (results []*Item, err error) {
+func (c *baseInstagram) Fetch() (results []*Item, err error) {
 	// someone's recent media (GET https://api.instagram.com/v1/users/4163129/media/recent?access_token=4163129.01dbb7e.8666598be3004da1b509c24bbd57336f)
 
 	// Create client

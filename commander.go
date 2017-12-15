@@ -18,17 +18,13 @@ func RunCommander() {
 		NewHackerNewsSlack(),
 		NewHackerNewsAll(),
 
-		NewMatsumotooooooInstagram(),
-		NewDabieCatInstagram(),
-		NewArkDomeInstagram(),
-		NewArkDomeInstagram2(),
-		NewRoCryInstagram(),
 		NewArkDomeV2(),
 	}
 
 	cmds = append(cmds, house.GetAllDealCommands()...)
 	cmds = append(cmds, GetAllZhihuCommands()...)
 	cmds = append(cmds, GetAllV2EXCommands()...)
+	cmds = append(cmds, GetAllInstagramCommands()...)
 
 	for i := 0; i < len(cmds); i++ {
 		// fmt.Printf("%+v\n", cmds[i])
