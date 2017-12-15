@@ -8,7 +8,7 @@ func TestSendRTM(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = n.Notify("hello", []string{
+	err = n.Notify("hello from rtm", []string{
 		"https://avatars1.githubusercontent.com/u/1117026?s=40&v=4",
 		"https://avatars1.githubusercontent.com/u/1117026?s=40&v=4",
 	})

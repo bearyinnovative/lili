@@ -16,7 +16,3 @@ func LogIfErr(err error) bool {
 	// panic(err)
 	return true
 }
-
-func Log(v ...interface{}) {
-	log.Println(v)
-}

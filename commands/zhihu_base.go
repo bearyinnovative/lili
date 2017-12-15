@@ -57,7 +57,7 @@ func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 	for i := 0; i < len(htmls.MustArray([]interface{}{})); i++ {
 		h := htmls.GetIndex(i).MustString("")
 		if h == "" {
-			Log("can't find html in json")
+			log.Println("can't find html in json")
 			continue
 		}
 

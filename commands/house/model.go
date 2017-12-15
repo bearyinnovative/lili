@@ -2,11 +2,6 @@ package house
 
 import (
 	"time"
-
-	. "github.com/bearyinnovative/lili/model"
-	. "github.com/bearyinnovative/lili/notifier"
-	bc "github.com/bearyinnovative/lili/notifier/bearychat"
-	. "github.com/bearyinnovative/lili/util"
 )
 
 type DealResponse struct {
@@ -49,17 +44,4 @@ type DealItem struct {
 
 	FetchedAt time.Time
 	CityId    int
-}
-
-var szHouseNotifiers []NotifierType
-
-func init() {
-	var n NotifierType
-	n, err := bc.NewRTMNotifier("4f2dda2fa66a0d1fc575d341cca4eda6", "=bwG5y")
-	if LogIfErr(err) {
-		n = BCChannelNotifier("house_info")
-	}
-	szHouseNotifiers = []NotifierType{
-		n,
-	}
 }

@@ -15,35 +15,6 @@ import (
 
 func RunCommander() {
 	cmds := []CommandType{
-		NewHouseDealBeiJing(),
-		NewHouseDealShangHai(),
-		NewHouseDealGuangZhou(),
-		NewHouseDealShenZhen(),
-		NewHouseDealTJ(),
-		NewHouseDealCD(),
-		NewHouseDealNJ(),
-		NewHouseDealHZ(),
-		NewHouseDealQD(),
-		NewHouseDealDL(),
-		NewHouseDealXM(),
-		NewHouseDealWH(),
-		NewHouseDealCQ(),
-		NewHouseDealCS(),
-		NewHouseDealXA(),
-		NewHouseDealJN(),
-		NewHouseDealSJZ(),
-		NewHouseDealDG(),
-		NewHouseDealFS(),
-		NewHouseDealHF(),
-		NewHouseDealYT(),
-		NewHouseDealZS(),
-		NewHouseDealZH(),
-		NewHouseDealSY(),
-		NewHouseDealS(),
-		NewHouseDealLF(),
-		NewHouseDealTY(),
-		NewHouseDealHUI(),
-
 		NewHackerNewsSlack(),
 		NewHackerNewsAll(),
 		NewMatsumotooooooInstagram(),
@@ -64,6 +35,8 @@ func RunCommander() {
 		NewDingDingV2EX(),
 		NewSlackV2EX(),
 	}
+
+	cmds = append(cmds, DealCommands...)
 
 	for i := 0; i < len(cmds); i++ {
 		// fmt.Printf("%+v\n", cmds[i])
@@ -109,7 +82,7 @@ func fetchAndNotify(c CommandType) {
 		}
 
 		if !item.InDays(31) {
-			Log("too old to notify:", item.Desc)
+			log.Println("too old to notify:", item.Desc)
 			continue
 		}
 
