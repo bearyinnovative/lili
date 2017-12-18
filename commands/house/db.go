@@ -34,7 +34,7 @@ func init() {
 	log.Println("house mongo setup success")
 }
 
-func UpsertDeal(d *DealItem) (bool, error) {
+func upsertDeal(d *DealItem) (bool, error) {
 	// return false, errors.New("unimplemented")
 	query := bson.M{
 		"housecode": d.HouseCode,

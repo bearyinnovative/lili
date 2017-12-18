@@ -7,8 +7,8 @@ import (
 )
 
 type CommandType interface {
-	Name() string
+	GetName() string
 	Fetch() ([]*Item, error)
-	Interval() time.Duration
-	Notifiers() []NotifierType
+	GetInterval() time.Duration
+	GetNotifiers() []NotifierType
 }

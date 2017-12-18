@@ -43,7 +43,7 @@ func start(c CommandType) {
 		fetchAndNotify(c)
 	}()
 
-	ticker := time.NewTicker(c.Interval())
+	ticker := time.NewTicker(c.GetInterval())
 	// schedule run
 	go func() {
 		for _ = range ticker.C {
@@ -79,7 +79,7 @@ func fetchAndNotify(c CommandType) {
 
 		// notify
 		text := fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
-		for _, n := range c.Notifiers() {
+		for _, n := range c.GetNotifiers() {
 			err = n.Notify(text, item.Images)
 			LogIfErr(err)
 			if err == nil {
@@ -89,5 +89,5 @@ func fetchAndNotify(c CommandType) {
 		}
 	}
 
-	log.Printf("[%s] fetched %d items, notified %d", c.Name(), len(items), notifiedCount)
+	log.Printf("[%s] fetched %d items, notified %d", c.GetName(), len(items), notifiedCount)
 }

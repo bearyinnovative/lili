@@ -1,6 +1,7 @@
-package commands
+package beary_commands
 
 import (
+	. "github.com/bearyinnovative/lili/commands"
 	. "github.com/bearyinnovative/lili/model"
 	. "github.com/bearyinnovative/lili/notifier"
 )

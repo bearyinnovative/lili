@@ -33,7 +33,7 @@ func init() {
 	}
 }
 
-func FetchDeals(cityId, offset, limit int) (result *DealResponse, err error) {
+func fetchDeals(cityId, offset, limit int) (result *DealResponse, err error) {
 	path := fmt.Sprintf(
 		"https://app.api.lianjia.com/house/chengjiao/search?city_id=%d&limit_offset=%d&limit_count=%d",
 		cityId, offset, limit)

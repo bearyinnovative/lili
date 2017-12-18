@@ -3,10 +3,9 @@ package main
 import (
 	"log"
 
-	. "github.com/bearyinnovative/lili/commands"
 	. "github.com/bearyinnovative/lili/model"
 
-	"github.com/bearyinnovative/lili/commands/house"
+	. "github.com/bearyinnovative/lili/beary_commands"
 )
 
 func main() {
@@ -15,7 +14,7 @@ func main() {
 		NewHackerNewsAll(),
 	}
 
-	cmds = append(cmds, house.GetAllDealCommands()...)
+	cmds = append(cmds, GetAllDealCommands()...)
 	cmds = append(cmds, GetAllZhihuCommands()...)
 	cmds = append(cmds, GetAllV2EXCommands()...)
 	cmds = append(cmds, GetAllInstagramCommands()...)

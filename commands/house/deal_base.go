@@ -51,25 +51,25 @@ func init() {
 }
 
 type BaseHouseDeal struct {
-	cityName      string
-	cityShortName string
-	notifiers     []NotifierType
+	CityName      string
+	CityShortName string
+	Notifiers     []NotifierType
 }
 
-func (c *BaseHouseDeal) Name() string {
-	return "house-deal-" + c.cityName
+func (c *BaseHouseDeal) GetName() string {
+	return "house-deal-" + c.CityName
 }
 
-func (c *BaseHouseDeal) Interval() time.Duration {
+func (c *BaseHouseDeal) GetInterval() time.Duration {
 	return time.Hour * 8
 }
 
-func (c *BaseHouseDeal) Notifiers() []NotifierType {
-	return c.notifiers
+func (c *BaseHouseDeal) GetNotifiers() []NotifierType {
+	return c.Notifiers
 }
 
 func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
-	cityId, err := getCityIdFromName(c.cityName)
+	cityId, err := getCityIdFromName(c.CityName)
 	if LogIfErr(err) {
 		return
 	}
@@ -79,19 +79,19 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 	limit := pageCount
 
 	for !stop {
-		dealResp, err := FetchDeals(cityId, offset, limit)
+		dealResp, err := fetchDeals(cityId, offset, limit)
 		if LogIfErr(err) {
 			break
 		}
 
 		log.Printf("[%s] fetched %d, has more: %d, total: %d\n",
-			c.Name(),
+			c.GetName(),
 			len(dealResp.Data.List),
 			dealResp.Data.HasMoreData,
 			dealResp.Data.TotalCount)
 
 		if dealResp.Errno != 0 {
-			log.Printf("[%s] ERROR: %d, %s", c.Name(), dealResp.Errno, dealResp.Error)
+			log.Printf("[%s] ERROR: %d, %s", c.GetName(), dealResp.Errno, dealResp.Error)
 			break
 		}
 
@@ -102,7 +102,7 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 		createdCount := 0
 		for _, di := range dealResp.Data.List {
 			di.CityId = cityId
-			created, err := UpsertDeal(di)
+			created, err := upsertDeal(di)
 
 			if LogIfErr(err) {
 				stop = true
@@ -115,7 +115,7 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 
 			createdCount += 1
 
-			if len(c.notifiers) == 0 {
+			if len(c.Notifiers) == 0 {
 				continue
 			}
 
@@ -127,13 +127,13 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 
 			// {"title" : "南岭花园 1室1厅 29.24㎡", "price" : 648000, "pricehide" : "6*", "deschide" : "近30天内成交", "unitprice" : 22162, "signdate" : "2017.11.04", "signtimestamp" : 1509788751, "signsource" : "链家成交", "orientation" : "南", "floorstate" : "低楼层/1层", "buildingfinishyear" : 1994, "decoration" : "简装", "buildingtype" : "板楼", "requirelogin" : 0, "fetchedat" : ISODate("2017-11-19T04:29:44.621Z") }
 			createdAt := time.Unix(int64(di.SignTimestamp), 0)
-			ref := fmt.Sprintf("https://%s.lianjia.com/chengjiao/%s.html", c.cityShortName, di.HouseCode)
+			ref := fmt.Sprintf("https://%s.lianjia.com/chengjiao/%s.html", c.CityShortName, di.HouseCode)
 			item := &Item{
-				Name:       c.Name(),
-				Identifier: c.Name() + "-" + di.HouseCode,
+				Name:       c.GetName(),
+				Identifier: c.GetName() + "-" + di.HouseCode,
 				// 南岭花园 1室1厅 29.24㎡ 南 | 简装 | 低楼层/1层 | 板楼 总价: 648000 单价: 22162 成交时间 2017.11.04
 				Desc: fmt.Sprintf("**NEW DEAL** %s %s %s | %s | %s | %s 总价: %.1f万 单价: %.4f万 成交时间: %s [Link](%s)",
-					c.cityName, di.Title, di.Orientation, di.Decoration, di.FloorState, di.BuildingType, float64(di.Price)/10000.0, float64(di.UnitPrice)/10000.0, di.SignDate, ref),
+					c.CityName, di.Title, di.Orientation, di.Decoration, di.FloorState, di.BuildingType, float64(di.Price)/10000.0, float64(di.UnitPrice)/10000.0, di.SignDate, ref),
 				Ref:     ref,
 				Created: createdAt,
 				Images:  images,
@@ -151,7 +151,7 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 		}
 	}
 
-	log.Printf("[%s] finished\n", c.Name())
+	log.Printf("[%s] finished\n", c.GetName())
 
 	return
 }

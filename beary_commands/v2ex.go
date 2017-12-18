@@ -1,6 +1,7 @@
-package commands
+package beary_commands
 
 import (
+	. "github.com/bearyinnovative/lili/commands"
 	. "github.com/bearyinnovative/lili/model"
 )
 
@@ -13,7 +14,7 @@ func GetAllV2EXCommands() (results []CommandType) {
 
 	for _, keyword := range data {
 		results = append(results, &BaseV2EX{
-			notifiers: LiliNotifiers,
+			Notifiers: LiliNotifiers,
 			Query:     keyword,
 		})
 	}

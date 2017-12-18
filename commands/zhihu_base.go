@@ -17,20 +17,20 @@ import (
 )
 
 type BaseZhihu struct {
-	notifiers []NotifierType
+	Notifiers []NotifierType
 	Query     string
 }
 
-func (c *BaseZhihu) Name() string {
+func (c *BaseZhihu) GetName() string {
 	return "zhihu-" + c.Query
 }
 
-func (c *BaseZhihu) Interval() time.Duration {
+func (c *BaseZhihu) GetInterval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BaseZhihu) Notifiers() []NotifierType {
-	return c.notifiers
+func (c *BaseZhihu) GetNotifiers() []NotifierType {
+	return c.Notifiers
 }
 
 func (z *BaseZhihu) Fetch() (results []*Item, err error) {
@@ -126,7 +126,7 @@ func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 
 func (z *BaseZhihu) createItem(id, desc, ref string, created time.Time) *Item {
 	return &Item{
-		Name:       z.Name(),
+		Name:       z.GetName(),
 		Identifier: "bc_zhihu_" + id, // bc_ for history reason
 		Desc:       desc,
 		Ref:        ref,

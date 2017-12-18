@@ -14,20 +14,20 @@ import (
 )
 
 type BaseV2EX struct {
-	notifiers []NotifierType
+	Notifiers []NotifierType
 	Query     string
 }
 
-func (c *BaseV2EX) Name() string {
+func (c *BaseV2EX) GetName() string {
 	return "v2ex-" + c.Query
 }
 
-func (c *BaseV2EX) Interval() time.Duration {
+func (c *BaseV2EX) GetInterval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BaseV2EX) Notifiers() []NotifierType {
-	return c.notifiers
+func (c *BaseV2EX) GetNotifiers() []NotifierType {
+	return c.Notifiers
 }
 
 func (c *BaseV2EX) Fetch() (results []*Item, err error) {
@@ -89,7 +89,7 @@ func (c *BaseV2EX) Fetch() (results []*Item, err error) {
 
 		desc := fmt.Sprintf("%s\n%s", title, link)
 		item := &Item{
-			Name: c.Name(),
+			Name: c.GetName(),
 			// use link as part of identifier
 			Identifier: "bc_v2ex_" + link,
 			Desc:       desc,

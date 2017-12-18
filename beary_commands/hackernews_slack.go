@@ -1,16 +1,17 @@
-package commands
+package beary_commands
 
 import (
 	"strings"
 
+	. "github.com/bearyinnovative/lili/commands"
 	. "github.com/bearyinnovative/lili/model"
 )
 
 func NewHackerNewsSlack() CommandType {
 	return &BaseHackerNews{
-		notifiers: LiliNotifiers,
-		name:      "slack",
-		shouldNotify: func(item *HNItem) bool {
+		Notifiers: LiliNotifiers,
+		Name:      "slack",
+		ShouldNotify: func(item *HNItem) bool {
 			return checkContains(item.Title, []string{"slack", "telegram", "whatsapp"})
 		},
 	}

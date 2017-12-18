@@ -13,19 +13,19 @@ import (
 
 type DoubanStatus struct {
 	ID        string
-	notifiers []NotifierType
+	Notifiers []NotifierType
 }
 
-func (c *DoubanStatus) Name() string {
+func (c *DoubanStatus) GetName() string {
 	return "douban-status-" + c.ID
 }
 
-func (c *DoubanStatus) Interval() time.Duration {
+func (c *DoubanStatus) GetInterval() time.Duration {
 	return time.Minute * 15
 }
 
-func (c *DoubanStatus) Notifiers() []NotifierType {
-	return c.notifiers
+func (c *DoubanStatus) GetNotifiers() []NotifierType {
+	return c.Notifiers
 }
 
 func (c *DoubanStatus) Fetch() (results []*Item, err error) {
@@ -101,8 +101,8 @@ func (c *DoubanStatus) Fetch() (results []*Item, err error) {
 		}
 
 		item := &Item{
-			Name:       c.Name(),
-			Identifier: c.Name() + "-" + realIt.ID,
+			Name:       c.GetName(),
+			Identifier: c.GetName() + "-" + realIt.ID,
 			Desc:       fmt.Sprintf("%s [Link](%s)", text, realIt.SharingURL),
 			Ref:        realIt.SharingURL,
 			Created:    created,

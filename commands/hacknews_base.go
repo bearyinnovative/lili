@@ -13,21 +13,21 @@ import (
 )
 
 type BaseHackerNews struct {
-	notifiers    []NotifierType
-	name         string
-	shouldNotify func(*HNItem) bool
+	Notifiers    []NotifierType
+	Name         string
+	ShouldNotify func(*HNItem) bool
 }
 
-func (c *BaseHackerNews) Name() string {
-	return "hackernews-" + c.name
+func (c *BaseHackerNews) GetName() string {
+	return "hackernews-" + c.Name
 }
 
-func (c *BaseHackerNews) Interval() time.Duration {
+func (c *BaseHackerNews) GetInterval() time.Duration {
 	return time.Minute * 15
 }
 
-func (c *BaseHackerNews) Notifiers() []NotifierType {
-	return c.notifiers
+func (c *BaseHackerNews) GetNotifiers() []NotifierType {
+	return c.Notifiers
 }
 
 /*
@@ -126,7 +126,7 @@ func (c *BaseHackerNews) getItem(client *http.Client, idx, id int) *Item {
 		return nil
 	}
 
-	if !c.shouldNotify(&hnItem) {
+	if !c.ShouldNotify(&hnItem) {
 		return nil
 	}
 
@@ -137,8 +137,8 @@ func (c *BaseHackerNews) getItem(client *http.Client, idx, id int) *Item {
 	commentPath := fmt.Sprintf("https://news.ycombinator.com/item?id=%d", hnItem.ID)
 	desc := fmt.Sprintf("[%s](%s)\nrank: %d, %d/[%d](%s)", hnItem.Title, hnItem.URL, idx, hnItem.Score, hnItem.Comments, commentPath)
 	return &Item{
-		Name:       c.Name(),
-		Identifier: fmt.Sprintf("hn_%s_%d", c.name, hnItem.ID),
+		Name:       c.GetName(),
+		Identifier: fmt.Sprintf("hn_%s_%d", c.Name, hnItem.ID),
 		Desc:       desc,
 		Ref:        hnItem.URL,
 		Created:    time.Unix(int64(hnItem.Time), 0),

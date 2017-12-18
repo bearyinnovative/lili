@@ -46,15 +46,15 @@ type baseInstagram struct {
 	PathGenerator func(string) string
 }
 
-func (c *baseInstagram) Name() string {
+func (c *baseInstagram) GetName() string {
 	return "instagram-" + c.ID
 }
 
-func (c *baseInstagram) Interval() time.Duration {
+func (c *baseInstagram) GetInterval() time.Duration {
 	return time.Minute * 60
 }
 
-func (c *baseInstagram) Notifiers() []NotifierType {
+func (c *baseInstagram) GetNotifiers() []NotifierType {
 	return c.notifiers
 }
 
@@ -123,7 +123,7 @@ func (c *baseInstagram) Fetch() (results []*Item, err error) {
 		created := time.Unix(createdUnix, 0)
 
 		item := &Item{
-			Name:       c.Name(),
+			Name:       c.GetName(),
 			Identifier: "instagram_" + id,
 			Desc:       desc,
 			Ref:        link,

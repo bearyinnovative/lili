@@ -1,9 +1,11 @@
-package house
+package beary_commands
 
 import (
+	"github.com/bearyinnovative/lili/commands/house"
+
 	. "github.com/bearyinnovative/lili/model"
 	. "github.com/bearyinnovative/lili/notifier"
-	bc "github.com/bearyinnovative/lili/notifier/bearychat"
+	"github.com/bearyinnovative/lili/notifier/bearychat"
 	. "github.com/bearyinnovative/lili/util"
 )
 
@@ -45,7 +47,7 @@ func GetAllDealCommands() (results []CommandType) {
 			notifiers = szNotifiers()
 		}
 
-		results = append(results, &BaseHouseDeal{
+		results = append(results, &house.BaseHouseDeal{
 			d[0], d[1], notifiers,
 		})
 	}
@@ -55,7 +57,7 @@ func GetAllDealCommands() (results []CommandType) {
 
 func szNotifiers() []NotifierType {
 	var n NotifierType
-	n, err := bc.NewRTMNotifier("4f2dda2fa66a0d1fc575d341cca4eda6", "=bwG5y")
+	n, err := bearychat.NewRTMNotifier("4f2dda2fa66a0d1fc575d341cca4eda6", "=bwG5y")
 	if LogIfErr(err) {
 		n = BCChannelNotifier("house_info")
 	}
