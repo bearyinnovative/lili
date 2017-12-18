@@ -9,8 +9,7 @@ import (
 )
 
 type IncomingNotifier struct {
-	Domain    string
-	Token     string
+	URL       string
 	ToUser    string
 	ToChannel string
 }
@@ -33,7 +32,7 @@ type IncomingNotifier struct {
 }
 */
 func (n *IncomingNotifier) Notify(text string, images []string) error {
-	path := fmt.Sprintf("https://hook.bearychat.com/%s/incoming/%s", n.Domain, n.Token)
+	path := n.URL
 
 	dic := map[string]interface{}{
 		"text": text,
