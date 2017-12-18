@@ -1,33 +1,35 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
 
-	. "github.com/bearyinnovative/lili/commands"
-	"github.com/bearyinnovative/lili/commands/house"
 	. "github.com/bearyinnovative/lili/model"
 	. "github.com/bearyinnovative/lili/util"
 
 	"github.com/dustin/go-humanize"
 )
 
-func RunCommander() {
-	cmds := []CommandType{
-		NewHackerNewsSlack(),
-		NewHackerNewsAll(),
+type Commander struct {
+	cmds []CommandType
+}
+
+func NewCommander(cmds []CommandType) *Commander {
+	return &Commander{
+		cmds: cmds,
+	}
+}
+
+func (c *Commander) Run() error {
+	if len(c.cmds) == 0 {
+		return errors.New("no commands")
 	}
 
-	cmds = append(cmds, house.GetAllDealCommands()...)
-	cmds = append(cmds, GetAllZhihuCommands()...)
-	cmds = append(cmds, GetAllV2EXCommands()...)
-	cmds = append(cmds, GetAllInstagramCommands()...)
-	cmds = append(cmds, ArkdomeDoubanStatus)
-
-	for i := 0; i < len(cmds); i++ {
+	for i := 0; i < len(c.cmds); i++ {
 		// fmt.Printf("%+v\n", cmds[i])
-		start(cmds[i])
+		start(c.cmds[i])
 	}
 
 	// FIXME:
