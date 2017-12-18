@@ -1,6 +1,10 @@
 package bearychat
 
-import bc "github.com/bearyinnovative/bearychat-go"
+import (
+	"log"
+
+	bc "github.com/bearyinnovative/bearychat-go"
+)
 
 type RTMNotifier struct {
 	context      *bc.RTMContext
@@ -13,7 +17,7 @@ func NewRTMNotifier(token, vid string) (*RTMNotifier, error) {
 		return nil, err
 	}
 
-	err, _, _ = context.Run()
+	err = runAndTryKeepConnected(context)
 	if err != nil {
 		return nil, err
 	}
@@ -22,6 +26,32 @@ func NewRTMNotifier(token, vid string) (*RTMNotifier, error) {
 		context,
 		vid,
 	}, nil
+}
+
+func runAndTryKeepConnected(context *bc.RTMContext) error {
+	err, _, errC := context.Run()
+	if err != nil {
+		return err
+	}
+
+	go tryKeepConnected(context, errC)
+	return nil
+}
+
+func tryKeepConnected(context *bc.RTMContext, errC chan error) {
+Loop:
+	for {
+		select {
+		case err := <-errC:
+			log.Printf("rtm loop error: %+v", err)
+			if err := context.Loop.Stop(); err != nil {
+				log.Fatal(err)
+			}
+
+			runAndTryKeepConnected(context)
+			break Loop
+		}
+	}
 }
 
 func (n *RTMNotifier) Notify(text string, images []string) error {
