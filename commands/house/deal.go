@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	. "github.com/bearyinnovative/lili/model"
@@ -69,6 +70,9 @@ func (c *BaseHouseDeal) GetNotifiers() []NotifierType {
 }
 
 func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
+	prefetchAll := os.Getenv("LILI_PREFETCH_ALL_DEALS")
+	log.Println("LILI_PREFETCH_ALL_DEALS:", prefetchAll)
+
 	cityId, err := getCityIdFromName(c.CityName)
 	if LogIfErr(err) {
 		return
