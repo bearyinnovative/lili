@@ -3,10 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "qqEqqDof8KeFF2SIDjikxk5Oz7U=",
+			"checksumSHA1": "2wcgnEdGnKLkBnzkBEC9RmiqP4w=",
 			"path": "github.com/PuerkitoBio/goquery",
-			"revision": "e1271ee34c6a305e38566ecd27ae374944907ee9",
-			"revisionTime": "2017-02-12T16:36:42Z"
+			"revision": "3cb3b8656883c2cc3deb9c643d93ea6e5157e425",
+			"revisionTime": "2016-12-30T03:41:54Z"
 		},
 		{
 			"checksumSHA1": "2rWSos1D+xqNSGkvEMOG3pntod8=",
@@ -87,16 +87,16 @@
 			"revisionTime": "2017-11-10T09:49:23Z"
 		},
 		{
-			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"checksumSHA1": "2t6c6F2y4b/PEV04TOHpQxh/xLc=",
 			"path": "golang.org/x/net/html",
-			"revision": "61557ac0112b576429a0df080e1c2cef5dfbb642",
-			"revisionTime": "2017-01-26T11:54:58Z"
+			"revision": "c7086645de248775cbf2373cf5ca4d2fa664b8c1",
+			"revisionTime": "2017-11-10T09:49:23Z"
 		},
 		{
-			"checksumSHA1": "z79z5msRzgU48FCZxSuxfU8b4rs=",
+			"checksumSHA1": "iWvOOLdDxvI4AVX6px6/HYBPeaQ=",
 			"path": "golang.org/x/net/html/atom",
-			"revision": "61557ac0112b576429a0df080e1c2cef5dfbb642",
-			"revisionTime": "2017-01-26T11:54:58Z"
+			"revision": "c7086645de248775cbf2373cf5ca4d2fa664b8c1",
+			"revisionTime": "2017-11-10T09:49:23Z"
 		},
 		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
