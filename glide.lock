@@ -1,0 +1,49 @@
+hash: 9a8a1c8fdffa0610c1d3295aa141061a806a6297dc2752d22ddf3ed453133680
+updated: 2017-12-19T19:07:06.795062+08:00
+imports:
+- name: github.com/andybalholm/cascadia
+  version: 349dd0209470eabd9514242c688c403c0926d266
+- name: github.com/bearyinnovative/bearychat-go
+  version: 71a89e3803a08ec4a152b28aa23a81e536d61127
+  subpackages:
+  - openapi
+- name: github.com/bitly/go-simplejson
+  version: 0c965951289cce37dec52ad1f34200fefc816777
+- name: github.com/cenkalti/backoff
+  version: 309aa717adbf351e92864cbedf9cca0b769a4b5a
+- name: github.com/dghubble/go-twitter
+  version: c4115fa44a928413e0b857e0eb47376ffde3a61a
+  subpackages:
+  - twitter
+- name: github.com/dghubble/oauth1
+  version: 7d51c10e15ca32917b32ce43f6e25840d6951db4
+- name: github.com/dghubble/sling
+  version: 80ec33c6152a53edb5545864ca37567b506c4ca5
+- name: github.com/dustin/go-humanize
+  version: bb3d318650d48840a39aa21a027c6630e198e626
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
+- name: github.com/gorilla/websocket
+  version: 2d1e4548da234d9cb742cc3628556fef86aafbac
+  repo: https://github.com/gorilla/websocket
+- name: github.com/pkg/errors
+  version: 17b591df37844cde689f4d5813e5cea0927d8dd2
+  repo: https://github.com/pkg/errors
+- name: github.com/PuerkitoBio/goquery
+  version: bc4e06eb0792d1a14661d19dd7822163c25bb6bd
+- name: golang.org/x/net
+  version: 6b27048ae5e6ad1ef927e72e437531493de612fe
+  subpackages:
+  - context
+  - html
+  - html/atom
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
+testImports: []
