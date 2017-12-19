@@ -9,9 +9,9 @@ import (
 )
 
 type IncomingNotifier struct {
-	URL       string
-	ToUser    string
-	ToChannel string
+	URL       string `yaml:"url"`
+	ToUser    string `yaml:"to_user,omitempty"`
+	ToChannel string `yaml:"to_channel,omitempty"`
 }
 
 /*

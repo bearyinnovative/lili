@@ -10,10 +10,10 @@ import (
 )
 
 type Notifier struct {
-	ConsumerKey    string
-	ConsumerSecret string
-	AccessToken    string
-	AccessSecret   string
+	ConsumerKey    string `yaml:"consumer_key"`
+	ConsumerSecret string `yaml:"consumer_secret"`
+	AccessToken    string `yaml:"access_token"`
+	AccessSecret   string `yaml:"access_secret"`
 }
 
 func (n *Notifier) Notify(text string, images []string) error {

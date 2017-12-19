@@ -9,9 +9,9 @@ import (
 )
 
 type Notifier struct {
-	Token     string
-	ChatID    int
-	ParseMode string
+	Token     string `yaml:"token"`
+	ChatID    int    `yaml:"chat_id"`
+	ParseMode string `yaml:"parse_mode,omitempty"`
 }
 
 func (n *Notifier) Notify(text string, images []string) error {
