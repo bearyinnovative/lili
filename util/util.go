@@ -1,9 +1,16 @@
 package util
 
-import "log"
+import (
+	"fmt"
+	"log"
+	"os"
+)
+
+var errLogger *log.Logger
 
 func init() {
-	// log.SetFlags(log.LstdFlags | log.Lshortfile)
+	errLogger = log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile)
+
 	log.Println("init util")
 }
 
@@ -12,7 +19,7 @@ func LogIfErr(err error) bool {
 		return false
 	}
 
-	log.Println("[ERROR]", err)
+	errLogger.Output(2, fmt.Sprintln("[ERROR]", err))
 	// panic(err)
 	return true
 }
