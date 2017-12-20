@@ -2,7 +2,6 @@ package telegram
 
 import (
 	"os"
-	"strconv"
 	"testing"
 )
 
@@ -12,22 +11,20 @@ func Test(t *testing.T) {
 		t.Fatal("can't find TEST_TELEGRAM_TOKEN")
 	}
 
-	idStr := os.Getenv("TEST_TELEGRAM_ID")
-	if idStr == "" {
+	id := os.Getenv("TEST_TELEGRAM_ID")
+	if id == "" {
 		t.Fatal("can't find TEST_TELEGRAM_ID")
-	}
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		t.Fatal(err)
 	}
 
 	n := &Notifier{
 		token,
 		id,
-		"Markdown",
+		"markdown",
 	}
-	err = n.Notify("[hi](http://baidu.com)", nil)
+	err := n.Notify("[hi](http://baidu.com)", []string{
+		"https://avatars1.githubusercontent.com/u/1117026?s=40&v=4",
+		"https://avatars1.githubusercontent.com/u/1117026?s=40&v=4",
+	})
 	if err != nil {
 		t.Error(err)
 	}

@@ -9,8 +9,9 @@ import (
 )
 
 type Notifier struct {
-	Token     string `yaml:"token"`
-	ChatID    int    `yaml:"chat_id"`
+	Token string `yaml:"token"`
+	// `@channel_name` or integer id as string: `-123456`
+	ChatID    string `yaml:"chat_id"`
 	ParseMode string `yaml:"parse_mode,omitempty"`
 }
 
