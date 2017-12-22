@@ -16,9 +16,9 @@ import (
 var dbContext DatabaseType
 
 type DatabaseType interface {
-	// return created, error
-	UpsertItem(*Item) (bool, error)
-	MarkNotified(*Item) error
+	// return created, key_changed, error
+	UpsertItem(*Item) (bool, bool, error)
+	MarkNotified(*Item, bool) error
 }
 
 type Database struct {
@@ -47,9 +47,10 @@ func init() {
 	log.Println("mongo setup success")
 }
 
-func (db *Database) UpsertItem(h *Item) (bool, error) {
+func (db *Database) UpsertItem(h *Item) (bool, bool, error) {
+	keyChanged := false
 	if !h.IsValid() {
-		return false, errors.New("item invalid")
+		return false, keyChanged, errors.New("item invalid")
 	}
 
 	query := bson.M{
@@ -57,10 +58,10 @@ func (db *Database) UpsertItem(h *Item) (bool, error) {
 	}
 	count, err := db.itemColl.Find(query).Count()
 	if LogIfErr(err) {
-		return false, err
+		return false, keyChanged, err
 	}
 	if count > 1 {
-		return false, errors.New("more than one item with same identifier")
+		return false, keyChanged, errors.New("more than one item with same identifier")
 	}
 	if count == 0 {
 		if h.Created.IsZero() {
@@ -69,24 +70,23 @@ func (db *Database) UpsertItem(h *Item) (bool, error) {
 
 		err = db.itemColl.Insert(h)
 		if LogIfErr(err) {
-			return false, err
+			return false, keyChanged, err
 		}
 
-		// h.JustCreated = true
-		return true, nil
+		return true, keyChanged, nil
 	}
 
 	var old *Item
 	err = db.itemColl.Find(query).One(&old)
 	if LogIfErr(err) {
-		return false, err
+		return false, keyChanged, err
 	}
 
 	h.Updated = time.Now()
 
 	if old.Key != h.Key {
 		// log.Println("key updated")
-		// h.KeyChanged = true
+		keyChanged = true
 		h.KeyHistory = append(old.KeyHistory, old.Key)
 	} else {
 		h.KeyHistory = old.KeyHistory
@@ -94,16 +94,22 @@ func (db *Database) UpsertItem(h *Item) (bool, error) {
 
 	err = db.itemColl.Update(query, h)
 	if LogIfErr(err) {
-		return false, err
+		return false, keyChanged, err
 	}
 
-	return false, nil
+	return false, keyChanged, nil
 }
 
-func (db *Database) MarkNotified(item *Item) error {
+func (db *Database) MarkNotified(item *Item, notified bool) error {
 	query := bson.M{
 		"identifier": item.Identifier,
 	}
 
-	return db.itemColl.Update(query, bson.M{"$set": bson.M{"notified_at": time.Now()}})
+	var t time.Time
+	if notified {
+		t = time.Now()
+	} else {
+		t = time.Time{} // empty time means haven't notified
+	}
+	return db.itemColl.Update(query, bson.M{"$set": bson.M{"notified_at": t}})
 }

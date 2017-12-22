@@ -61,16 +61,16 @@ func fetchAndNotify(c CommandType) {
 	notifiedCount := 0
 
 	for _, item := range items {
-		created, err := dbContext.UpsertItem(item)
+		created, keyChanged, err := dbContext.UpsertItem(item)
 		if LogIfErr(err) {
 			continue
 		}
 
-		if !created {
+		if !created && !keyChanged {
 			continue
 		}
 
-		if !item.InDays(31) {
+		if !keyChanged && !item.DoNotCheckTooOld && !item.InDays(31) {
 			log.Println("too old to notify:", item.Desc)
 			continue
 		}
@@ -78,14 +78,19 @@ func fetchAndNotify(c CommandType) {
 		notifiedCount += 1
 
 		// notify
-		text := fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
+		var text string
+		if keyChanged {
+			text = fmt.Sprintf("%s (%s)", item.Desc, item.KeyHistoryDesc())
+		} else {
+			text = fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
+		}
+
 		for _, n := range c.GetNotifiers() {
 			err = n.Notify(text, item.Images)
 			LogIfErr(err)
-			if err == nil {
-				err = dbContext.MarkNotified(item)
-				LogIfErr(err)
-			}
+
+			err = dbContext.MarkNotified(item, err == nil)
+			LogIfErr(err)
 		}
 	}
 

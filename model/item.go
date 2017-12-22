@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type Item struct {
 	// required
@@ -16,9 +19,10 @@ type Item struct {
 	Updated    time.Time `bson:"updated"`
 	NotifiedAt time.Time `bson:"notified_at"`
 
-	// not used for now
 	Key        string   `bson:"key"`
 	KeyHistory []string `bson:"key_history"`
+
+	DoNotCheckTooOld bool
 }
 
 func (i *Item) IsValid() bool {
@@ -27,6 +31,17 @@ func (i *Item) IsValid() bool {
 	}
 
 	return true
+}
+
+func (i *Item) KeyHistoryDesc() string {
+	if len(i.KeyHistory) < 10 {
+		return strings.Join(i.KeyHistory, "->")
+	}
+
+	results := i.KeyHistory[:2]
+	results = append(results, "...")
+	results = append(results, i.KeyHistory[len(i.KeyHistory)-5:]...)
+	return strings.Join(results, "->")
 }
 
 func (i *Item) InDays(n int) bool {
