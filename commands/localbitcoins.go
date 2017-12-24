@@ -3,7 +3,6 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -125,46 +124,20 @@ func (c *BaseLBBuyOnline) Fetch() (results []*Item, err error) {
 			Identifier: c.GetName() + "-" + strconv.Itoa(data.AdID),
 			// vc001 (18; 100%) 124000.00 CNY (500 - 30000) https://localbitcoins.com/ad/644879
 			// **124000.00** CNY vc001 (18; 100%) (500 - 30000) https://localbitcoins.com/ad/644879
-			Desc:             fmt.Sprintf("[%s %s (%s - %s) %s](%s)", data.TempPrice, c.Currency, data.MinAmount, data.MaxAmount, data.Profile.Name, ad.Actions.PublicView),
-			Ref:              ad.Actions.PublicView,
-			Created:          data.CreatedAt,
-			Key:              prettyPrice(data.TempPrice),
-			DoNotCheckTooOld: true,
+			Desc:      fmt.Sprintf("[%s %s (%s - %s) %s](%s)", data.TempPrice, c.Currency, data.MinAmount, data.MaxAmount, data.Profile.Name, ad.Actions.PublicView),
+			Ref:       ad.Actions.PublicView,
+			Created:   data.CreatedAt,
+			Key:       prettyPriceInWan(data.TempPrice),
+			ItemFlags: DoNotCheckTooOld,
 		}
 
 		// only notify the lowest price
-		if i < 1 {
-			results = append(results, item)
+		if i > 0 {
+			item.ItemFlags |= DoNotNotify
 		}
+
+		results = append(results, item)
 	}
 
-	return
-}
-
-func prettyPrice(priceStr string) string {
-	price, err := strconv.ParseFloat(priceStr, 64)
-	if LogIfErr(err) {
-		return priceStr
-	}
-
-	if price < 10000 {
-		return priceStr
-	}
-
-	priceK := round(float64(price)/10000.0, .5, 2)
-	return fmt.Sprintf("%.2fw", priceK)
-}
-
-func round(val float64, roundOn float64, places int) (newVal float64) {
-	var round float64
-	pow := math.Pow(10, float64(places))
-	digit := pow * val
-	_, div := math.Modf(digit)
-	if div >= roundOn {
-		round = math.Ceil(digit)
-	} else {
-		round = math.Floor(digit)
-	}
-	newVal = round / pow
 	return
 }

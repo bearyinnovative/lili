@@ -2,14 +2,11 @@ package lili
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
 	. "github.com/bearyinnovative/lili/model"
 	. "github.com/bearyinnovative/lili/util"
-
-	"github.com/dustin/go-humanize"
 )
 
 type Commander struct {
@@ -54,43 +51,42 @@ func start(c CommandType) {
 
 func fetchAndNotify(c CommandType) {
 	items, err := c.Fetch()
-	if err != nil {
+	if LogIfErr(err) {
 		return
 	}
 
 	notifiedCount := 0
 
 	for _, item := range items {
-		created, keyChanged, err := dbContext.UpsertItem(item)
-		if LogIfErr(err) {
-			continue
+		created, keyChanged := false, false
+		var err error
+		if item.NeedSaveToDB() {
+			created, keyChanged, err = dbContext.UpsertItem(item)
+
+			if LogIfErr(err) {
+				continue
+			}
 		}
 
-		if !created && !keyChanged {
-			continue
-		}
-
-		if !keyChanged && !item.DoNotCheckTooOld && !item.InDays(31) {
-			log.Println("too old to notify:", item.Desc)
+		if !item.CheckNeedNotify(created, keyChanged) {
 			continue
 		}
 
 		notifiedCount += 1
 
-		// notify
-		var text string
-		if keyChanged {
-			text = fmt.Sprintf("%s (%s)", item.Desc, item.KeyHistoryDesc())
-		} else {
-			text = fmt.Sprintf("%s (%s)", item.Desc, humanize.Time(item.Created))
-		}
+		// notify text
+		text := item.GetNotifyText(created, keyChanged)
 
+		// notify
 		for _, n := range c.GetNotifiers() {
 			err = n.Notify(text, item.Images)
 			LogIfErr(err)
 
-			err = dbContext.MarkNotified(item, err == nil)
-			LogIfErr(err)
+			// TODO: need handle multi notifiers
+			if item.NeedSaveToDB() {
+				err = dbContext.MarkNotified(item, err == nil)
+				LogIfErr(err)
+			}
 		}
 	}
 
