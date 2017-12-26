@@ -1,0 +1,66 @@
+version: '3'
+services:
+  lili:
+    build:
+      context: .
+      args:
+        - http_proxy=${PROXY}
+        - https_proxy=${PROXY}
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    volumes:
+      - ./config.yaml:/data/config.yaml
+    environment:
+      - MONGO_SERVER=mongodb:27017
+      - CONFIG_PATH=/data/config.yaml
+      - LILI_PREFETCH_ALL_DEALS=${LILI_PREFETCH_ALL_DEALS}
+      # TODO: remove hardcode ip
+      - http_proxy=${PROXY}
+      - https_proxy=${PROXY}
+  mongodb:
+    image: mongo
+    volumes:
+      - data:/data/db
+    command: mongod --smallfiles --bind_ip_all
+    ports:
+      - "27017:27017"
+  backup:
+    image: mongo
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    volumes:
+      - ./mongodump:/tmp/mongodump
+      - ./scripts/mongo-backup.sh:/tmp/mongo-backup.sh
+    environment:
+      - MONGO_SERVER=mongodb:27017
+    command: /tmp/mongo-backup.sh
+  restore:
+    image: mongo
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    volumes:
+      - ./mongodump:/tmp/mongodump
+      - ./scripts/mongo-restore.sh:/tmp/mongo-restore.sh
+    environment:
+      - MONGO_SERVER=mongodb:27017
+    command: /tmp/mongo-restore.sh
+  cleanup:
+    image: mongo
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    volumes:
+      - ./mongodump:/tmp/mongodump
+      - ./scripts:/tmp/mongo-scripts
+    environment:
+      - MONGO_SERVER=mongodb:27017
+    command: /tmp/mongo-scripts/mongo-cleanup.sh
+volumes:
+  data:

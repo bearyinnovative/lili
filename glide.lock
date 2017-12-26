@@ -1,5 +1,5 @@
 hash: 9a8a1c8fdffa0610c1d3295aa141061a806a6297dc2752d22ddf3ed453133680
-updated: 2017-12-19T19:07:06.795062+08:00
+updated: 2017-12-26T16:17:53.853633+08:00
 imports:
 - name: github.com/andybalholm/cascadia
   version: 349dd0209470eabd9514242c688c403c0926d266
@@ -10,7 +10,7 @@ imports:
 - name: github.com/bitly/go-simplejson
   version: 0c965951289cce37dec52ad1f34200fefc816777
 - name: github.com/cenkalti/backoff
-  version: 309aa717adbf351e92864cbedf9cca0b769a4b5a
+  version: 2ea60e5f094469f9e65adb9cd103795b73ae743e
 - name: github.com/dghubble/go-twitter
   version: c4115fa44a928413e0b857e0eb47376ffde3a61a
   subpackages:
@@ -46,4 +46,6 @@ imports:
   - internal/json
   - internal/sasl
   - internal/scram
+- name: gopkg.in/yaml.v2
+  version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
 testImports: []

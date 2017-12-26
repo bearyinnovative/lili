@@ -1,0 +1,128 @@
+# notifiers/telegram 可以设置多个, 比如
+# notifiers:
+#   - url: https://hook.bearychat.com/=bw52O/incoming/xxxxxxxxx
+#     to_channel: channel_name
+#   - url: https://hook.bearychat.com/=bw52O/incoming/yyyyyyyyyy
+#     to_user: username
+# telegram_notifiers:
+#   - token: "TELEGRAM_TOKEN_HERE"
+#     chat_id: "@CHANNEL_NAME"
+#     parse_mode: markdown # optional
+
+# 搜索知乎关键词
+zhihu:
+  - keywords:
+    - BearyChat
+    notifiers:
+      - url: https://hook.bearychat.com/=bw52O/incoming/REPLACE_TO_REAL_URL
+        to_channel: 不是真的lili
+
+# 搜索v2ex关键词
+v2ex:
+  - keywords:
+    - BearyChat
+    notifiers:
+      - url: https://hook.bearychat.com/=bw52O/incoming/REPLACE_TO_REAL_URL
+        to_channel: 不是真的lili
+
+# 根据 tag 或者 user 轮询 instagram
+instagram:
+  - tags:
+    - arkdome
+    - matsumotoooooo
+    notifiers:
+      - url: https://hook.bearychat.com/=bw52O/incoming/08c0d225efc37cb33d31d089b91233d1
+        to_channel: 云养猫
+  - usernames:
+    - dabie.cat
+    notifiers:
+      - url: https://hook.bearychat.com/=bw52O/incoming/08c0d225efc37cb33d31d089b91233d1
+        to_channel: 云养猫
+
+# 根据 keywords 或者一定条件跟踪 hackernews
+# name must NOT be same
+hackernews:
+  - name: slack
+    keywords:
+    - slack
+    - telegram
+    - whatsapp
+    notifiers:
+    - url: https://hook.bearychat.com/=bw52O/incoming/REPLACE_TO_REAL_URL
+      to_channel: 不是真的lili
+  - name: rocry
+    min_score: 50 # 如果少于这个分数不通知
+    min_comment_count: 5 # 如果少于这个评论数不通知
+    notifiers:
+    - url: https://hook.bearychat.com/=bw52O/incoming/REPLACE_TO_REAL_URL
+      to_channel: rocry_news
+
+# 根据 id 查某个豆瓣用户的 status
+# 比如在 https://www.douban.com/people/arkdome/statuses 在某条原创的动态右键->inspect, 然后就能看到类似 data-uid="144859503"
+douban:
+  - id: "144859503"
+    notifiers:
+    - url: https://hook.bearychat.com/=bw52O/incoming/REPLACE_TO_REAL_URL
+      to_channel: 云养猫
+
+# 定期查询链家的成交记录
+house_deal:
+  # - name: 北京
+  #   short_name: bj
+  # - name: 上海
+  #   short_name: sh
+  # - name: 广州
+  #   short_name: gz
+  - name: 深圳
+    short_name: sz
+    notifiers:
+      - url: https://hook.bearychat.com/=bw52O/incoming/REPLACE_TO_REAL_URL
+        to_channel: house_info
+  # - name: 天津
+  #   short_name: tj
+  # - name: 成都
+  #   short_name: cd
+  # - name: 南京
+  #   short_name: nj
+  # - name: 杭州
+  #   short_name: hz
+  # - name: 青岛
+  #   short_name: qd
+  # - name: 大连
+  #   short_name: dl
+  # - name: 厦门
+  #   short_name: xm
+  # - name: 武汉
+  #   short_name: wh
+  # - name: 重庆
+  #   short_name: cq
+  # - name: 长沙
+  #   short_name: cs
+  # - name: 西安
+  #   short_name: xa
+  # - name: 济南
+  #   short_name: jn
+  # - name: 石家庄
+  #   short_name: sjz
+  # - name: 东莞
+  #   short_name: dg
+  # - name: 佛山
+  #   short_name: fs
+  # - name: 合肥
+  #   short_name: hf
+  # - name: 烟台
+  #   short_name: yt
+  # - name: 中山
+  #   short_name: zs
+  # - name: 珠海
+  #   short_name: zh
+  # - name: 沈阳
+  #   short_name: sy
+  # - name: 苏州
+  #   short_name: s
+  # - name: 廊坊
+  #   short_name: lf
+  # - name: 太原
+  #   short_name: ty
+  # - name: 惠州
+  #   short_name: hui

@@ -1,4 +1,4 @@
-package lili
+package main
 
 import (
 	"errors"
