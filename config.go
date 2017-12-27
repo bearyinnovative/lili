@@ -56,6 +56,20 @@ type Config struct {
 		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
 		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
 	} `yaml:"house_deal"`
+
+	LocalBitcoin []struct {
+		Currency          string               `yaml:"currency"`
+		Interval          int                  `yaml:"interval"`
+		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
+		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+	} `yaml:"localbitcoin"`
+
+	CoinMarket []struct {
+		Currency          string               `yaml:"currency"`
+		Interval          int                  `yaml:"interval"`
+		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
+		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+	} `yaml:"coinmarket"`
 }
 
 func (config *Config) ToCommandTypes() []CommandType {
@@ -162,6 +176,42 @@ func (config *Config) ToCommandTypes() []CommandType {
 				Query:     keyword,
 			})
 		}
+	}
+
+	for _, c := range config.LocalBitcoin {
+		if c.Currency == "" {
+			log.Println("can't find currency for LocalBitcoin:", c)
+			continue
+		}
+
+		// default interval 5 min
+		if c.Interval <= 0 {
+			c.Interval = 5
+		}
+
+		results = append(results, &BaseLBBuyOnline{
+			Currency:  c.Currency,
+			Interval:  c.Interval,
+			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+		})
+	}
+
+	for _, c := range config.CoinMarket {
+		if c.Currency == "" {
+			log.Println("can't find currency for CoinMarket:", c)
+			continue
+		}
+
+		// default interval 5 min
+		if c.Interval <= 0 {
+			c.Interval = 5
+		}
+
+		results = append(results, &CoinMarket{
+			Currency:  c.Currency,
+			Interval:  c.Interval,
+			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+		})
 	}
 
 	return results
