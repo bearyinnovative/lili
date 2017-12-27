@@ -19,6 +19,7 @@ services:
       # TODO: remove hardcode ip
       - http_proxy=${PROXY}
       - https_proxy=${PROXY}
+    restart: always
   mongodb:
     image: mongo
     volumes:
