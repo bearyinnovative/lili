@@ -47,10 +47,6 @@ func (c *CoinMarket) GetInterval() time.Duration {
 	return time.Minute * time.Duration(c.Interval)
 }
 
-func (c *CoinMarket) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 func (c *CoinMarket) Fetch() (results []*Item, err error) {
 	path := fmt.Sprintf("https://api.coinmarketcap.com/v1/ticker/?convert=%s&limit=10", c.Currency)
 
@@ -96,6 +92,7 @@ func (c *CoinMarket) Fetch() (results []*Item, err error) {
 		Identifier: c.GetName() + "-summary",
 		NotifyText: strings.Join(lines, "\n"),
 		ItemFlags:  JustNotify,
+		Notifiers:  c.Notifiers,
 	}
 
 	results = append(results, item)

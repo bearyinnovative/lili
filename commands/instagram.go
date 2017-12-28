@@ -49,10 +49,6 @@ func (c *baseInstagram) GetInterval() time.Duration {
 	return time.Minute * 60
 }
 
-func (c *baseInstagram) GetNotifiers() []NotifierType {
-	return c.notifiers
-}
-
 func (c *baseInstagram) Fetch() (results []*Item, err error) {
 	// Create client
 	client := &http.Client{}
@@ -122,6 +118,7 @@ func (c *baseInstagram) Fetch() (results []*Item, err error) {
 			Ref:        link,
 			Created:    created,
 			Images:     image_urls,
+			Notifiers:  c.notifiers,
 		}
 		results = append(results, item)
 

@@ -13,7 +13,6 @@
 type CommandType interface {
 	GetName() string
 	GetInterval() time.Duration
-	GetNotifiers() []NotifierType
 	Fetch() ([]*Item, error)
 }
 ```
@@ -22,11 +21,9 @@ type CommandType interface {
 
 1. 名字
 2. 更新间隔
-3. 需要怎么通知
-4. fetch 的时候去请求并组装好 Item 对象
+3. fetch 的时候去请求并组装好 Item 对象 // 这里主要是推送的内容以及推送到哪里
 
 > 可以看 /commands 里面的一些实例
 
-# TODO
-* 清理一些对用户没用的东西
-	* init_mongodb
+# Caveats
+* 如果 notify 失败的时候暂时不会重试

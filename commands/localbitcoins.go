@@ -82,10 +82,6 @@ func (c *BaseLBBuyOnline) GetInterval() time.Duration {
 	return time.Minute * time.Duration(c.Interval)
 }
 
-func (c *BaseLBBuyOnline) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 func (c *BaseLBBuyOnline) Fetch() (results []*Item, err error) {
 	// Request (GET https://localbitcoins.com/buy-bitcoins-online/CNY/.json)
 	path := fmt.Sprintf("https://localbitcoins.com/buy-bitcoins-online/%s/.json", c.Currency)
@@ -132,8 +128,8 @@ func (c *BaseLBBuyOnline) Fetch() (results []*Item, err error) {
 		}
 
 		// only notify the lowest price
-		if i > 0 {
-			item.ItemFlags |= DoNotNotify
+		if i == 0 {
+			item.Notifiers = c.Notifiers
 		}
 
 		results = append(results, item)

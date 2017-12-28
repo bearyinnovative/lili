@@ -68,7 +68,8 @@ func fetchAndNotify(c CommandType) {
 			}
 		}
 
-		if !item.CheckNeedNotify(created, keyChanged) {
+		notifiers := item.GetValidNotifiers(created, keyChanged)
+		if len(notifiers) == 0 {
 			continue
 		}
 
@@ -78,7 +79,12 @@ func fetchAndNotify(c CommandType) {
 		text := item.GetNotifyText(created, keyChanged)
 
 		// notify
-		for _, n := range c.GetNotifiers() {
+		for _, n := range notifiers {
+			if IsDebug() {
+				log.Println("[DEBUG]", text, item.Images)
+				continue
+			}
+
 			err = n.Notify(text, item.Images)
 			LogIfErr(err)
 

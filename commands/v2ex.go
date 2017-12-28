@@ -26,10 +26,6 @@ func (c *BaseV2EX) GetInterval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BaseV2EX) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 func (c *BaseV2EX) Fetch() (results []*Item, err error) {
 	// custom search v2ex (GET https://www.googleapis.com/customsearch/v1?key=AIzaSyC1Q3F9GsEaIaxLe4zRwMeOhhNr7axtXEg&cx=011777316675351136864:22g5hinnt0i&q=bearychat)
 
@@ -95,6 +91,7 @@ func (c *BaseV2EX) Fetch() (results []*Item, err error) {
 			Desc:       desc,
 			Ref:        link,
 			Created:    created,
+			Notifiers:  c.Notifiers,
 		}
 		results = append(results, item)
 	}

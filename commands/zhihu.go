@@ -29,10 +29,6 @@ func (c *BaseZhihu) GetInterval() time.Duration {
 	return time.Minute * 45
 }
 
-func (c *BaseZhihu) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 	client := &http.Client{}
 	path := fmt.Sprintf("https://www.zhihu.com/r/search?q=%s&type=content", url.PathEscape(z.Query))
@@ -131,5 +127,6 @@ func (z *BaseZhihu) createItem(id, desc, ref string, created time.Time) *Item {
 		Desc:       desc,
 		Ref:        ref,
 		Created:    created,
+		Notifiers:  z.Notifiers,
 	}
 }

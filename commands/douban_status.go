@@ -24,10 +24,6 @@ func (c *DoubanStatus) GetInterval() time.Duration {
 	return time.Minute * 15
 }
 
-func (c *DoubanStatus) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 func (c *DoubanStatus) Fetch() (results []*Item, err error) {
 	// https://frodo.douban.com/api/v2/status/user_timeline/144859503 (GET https://frodo.douban.com/api/v2/status/user_timeline/144859503?count=15&os_rom=miui6&apikey=0dad551ec0f84ed02907ff5c42e8ec70&channel=Google_Market&udid=8f7b52865761deac6d547c8d415ed0a079704517&_sig=xA%2F56W6u7Yca1iIgMkXS3NO6Y9A%3D&_ts=1510883310)
 
@@ -107,6 +103,7 @@ func (c *DoubanStatus) Fetch() (results []*Item, err error) {
 			Ref:        realIt.SharingURL,
 			Created:    created,
 			Images:     pics,
+			Notifiers:  c.Notifiers,
 		}
 		results = append(results, item)
 	}

@@ -36,7 +36,6 @@ type Config struct {
 	} `yaml:"instagram"`
 
 	Hackernews []struct {
-		Name              string               `yaml:"name"`
 		Keywords          []string             `yaml:"keywords,omitempty"`
 		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
 		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
@@ -102,18 +101,12 @@ func (config *Config) ToCommandTypes() []CommandType {
 	}
 
 	for _, c := range config.Hackernews {
-		if c.Name == "" {
-			log.Println("can't find name for hackernews:", c)
-			continue
-		}
-
 		minScore := c.MinScore
 		minCommentCount := c.MinCommentCount
 		keywords := c.Keywords
 
 		results = append(results, &BaseHackerNews{
 			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
-			Name:      c.Name,
 			ShouldNotify: func(item *HNItem) bool {
 				if minScore > 0 && item.Score < minScore {
 					return false

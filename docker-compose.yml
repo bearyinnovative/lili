@@ -16,7 +16,7 @@ services:
       - MONGO_SERVER=mongodb:27017
       - CONFIG_PATH=/data/config.yaml
       - LILI_PREFETCH_ALL_DEALS=${LILI_PREFETCH_ALL_DEALS}
-      # TODO: remove hardcode ip
+      - LILI_MODE=${LILI_MODE}
       - http_proxy=${PROXY}
       - https_proxy=${PROXY}
     restart: always

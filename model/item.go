@@ -5,14 +5,13 @@ import (
 	"strings"
 	"time"
 
+	. "github.com/bearyinnovative/lili/notifier"
 	humanize "github.com/dustin/go-humanize"
 )
 
 type ItemFlag int
 
 const (
-	// will override JustNotify, usually used for track history in db
-	DoNotNotify ItemFlag = 1 << iota
 	// normal used for force notify something and not save to db
 	JustNotify ItemFlag = 1 << iota
 	// won't check how old this item is created
@@ -22,26 +21,28 @@ const (
 type Item struct {
 	// required
 	Identifier string `bson:"identifier"`
-	Name       string `bson:"name"`
 
 	// optional
-	NotifyText string   // will use this instead of desc to notify
-	Desc       string   `bson:"desc"`
-	Ref        string   `bson:"ref"`
-	Images     []string `bson:"images"`
+	Name       string   `bson:"name,omitempty"`
+	NotifyText string   `bson:"notify_text,omitempty"` // will use this instead of desc to notify
+	Desc       string   `bson:"desc,omitempty"`
+	Ref        string   `bson:"ref,omitempty"`
+	Images     []string `bson:"images,omitempty"`
 
-	Created    time.Time `bson:"created"`
-	Updated    time.Time `bson:"updated"`
-	NotifiedAt time.Time `bson:"notified_at"`
+	Created time.Time `bson:"created,omitempty"`
+	Updated time.Time `bson:"updated,omitempty"`
 
-	Key        string   `bson:"key"`
-	KeyHistory []string `bson:"key_history"`
+	Notifiers  []NotifierType `bson:"-"`
+	NotifiedAt time.Time      `bson:"notified_at,omitempty"`
 
-	ItemFlags ItemFlag
+	Key        string   `bson:"key,omitempty"`
+	KeyHistory []string `bson:"key_history,omitempty"`
+
+	ItemFlags ItemFlag `bson:"item_flags,omitempty"`
 }
 
 func (i *Item) IsValid() bool {
-	if i.Identifier == "" || i.Name == "" {
+	if i.Identifier == "" {
 		return false
 	}
 
@@ -59,22 +60,18 @@ func (i *Item) keyHistoryDesc() string {
 	return strings.Join(results, "->")
 }
 
-func (i *Item) CheckNeedNotify(created, keyChanged bool) bool {
-	if i.ItemFlags&DoNotNotify > 0 {
-		return false
-	}
-
+func (i *Item) GetValidNotifiers(created, keyChanged bool) []NotifierType {
 	if i.ItemFlags&JustNotify > 0 {
-		return true
+		return i.Notifiers
 	}
 
 	checkTooOldPassed := (i.ItemFlags&DoNotCheckTooOld > 0) || i.InDays(31)
 
-	if created || keyChanged {
-		return checkTooOldPassed
+	if (created || keyChanged) && checkTooOldPassed {
+		return i.Notifiers
 	}
 
-	return false
+	return nil
 }
 
 func (i *Item) GetNotifyText(created, keyChanged bool) string {

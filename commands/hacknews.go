@@ -26,10 +26,6 @@ func (c *BaseHackerNews) GetInterval() time.Duration {
 	return time.Minute * 15
 }
 
-func (c *BaseHackerNews) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 /*
 {
   "by" : "andreasley",
@@ -140,5 +136,6 @@ func (c *BaseHackerNews) getItem(client *http.Client, idx, id int) *Item {
 		Desc:       desc,
 		Ref:        hnItem.URL,
 		Created:    time.Unix(int64(hnItem.Time), 0),
+		Notifiers:  c.Notifiers,
 	}
 }
