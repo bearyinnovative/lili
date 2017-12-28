@@ -2,7 +2,8 @@ version: '3'
 services:
   lili:
     build:
-      context: .
+      context: ../..
+      dockerfile: examples/lili/Dockerfile
       args:
         - http_proxy=${PROXY}
         - https_proxy=${PROXY}
@@ -27,41 +28,18 @@ services:
     command: mongod --smallfiles --bind_ip_all
     ports:
       - "27017:27017"
-  backup:
+  script:
     image: mongo
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-    volumes:
-      - ./mongodump:/tmp/mongodump
-      - ./scripts/mongo-backup.sh:/tmp/mongo-backup.sh
-    environment:
-      - MONGO_SERVER=mongodb:27017
-    command: /tmp/mongo-backup.sh
-  restore:
-    image: mongo
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-    volumes:
-      - ./mongodump:/tmp/mongodump
-      - ./scripts/mongo-restore.sh:/tmp/mongo-restore.sh
-    environment:
-      - MONGO_SERVER=mongodb:27017
-    command: /tmp/mongo-restore.sh
-  cleanup:
-    image: mongo
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
     volumes:
       - ./mongodump:/tmp/mongodump
       - ./scripts:/tmp/mongo-scripts
     environment:
       - MONGO_SERVER=mongodb:27017
-    command: /tmp/mongo-scripts/mongo-cleanup.sh
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    working_dir: /tmp/mongo-scripts
+    entrypoint: /tmp/mongo-scripts/main.sh
 volumes:
   data:

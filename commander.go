@@ -1,4 +1,4 @@
-package main
+package lili
 
 import (
 	"errors"
@@ -29,7 +29,6 @@ func (c *Commander) Run() error {
 		start(c.cmds[i])
 	}
 
-	// FIXME:
 	// wait forever
 	select {}
 }

@@ -1,0 +1,5 @@
+package: github.com/bearyinnovative/lili/examples/lili
+import:
+- package: gopkg.in/yaml.v2
+ignore:
+- github.com/bearyinnovative/lili

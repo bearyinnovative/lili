@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"os"
+
+	. "github.com/bearyinnovative/lili"
 )
 
 func main() {

@@ -1,13 +1,14 @@
-# 如何运行
+# 如何运行 example/lili
+0. `cd examples/lili`
 1. 确认 docker 环境已经装好
 2. 参照 `.env.example` 新建 `.env` 文件, 并设置 proxy
 	* 如果运行 docker 的环境可以翻墙则跳过这一步
 3. 参照 `config.yaml.example` 新建 `config.yaml`
+	* 友情提示: 可以先把不要的先注释掉
 	* 填好 BearyChat incoming 机器人的 url
 4. `docker-compose up lili`
 
 # 如何新增一个爬虫
-
 
 ```go
 type CommandType interface {
@@ -17,7 +18,7 @@ type CommandType interface {
 }
 ```
 
-定义一个 struct 实现如上4个接口方法
+定义一个 struct 实现如上3个接口方法
 
 1. 名字
 2. 更新间隔

@@ -1,4 +1,4 @@
-package main
+package lili
 
 import (
 	"errors"
@@ -63,9 +63,12 @@ func (db *Database) UpsertItem(h *Item) (bool, bool, error) {
 	if count > 1 {
 		return false, keyChanged, errors.New("more than one item with same identifier")
 	}
+
+	h.Updated = time.Now()
+
 	if count == 0 {
 		if h.Created.IsZero() {
-			h.Created = time.Now()
+			h.Created = h.Updated
 		}
 
 		err = db.itemColl.Insert(h)
@@ -81,8 +84,6 @@ func (db *Database) UpsertItem(h *Item) (bool, bool, error) {
 	if LogIfErr(err) {
 		return false, keyChanged, err
 	}
-
-	h.Updated = time.Now()
 
 	if old.Key != h.Key {
 		// log.Println("key updated")

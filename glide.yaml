@@ -13,3 +13,6 @@ import:
 - package: gopkg.in/mgo.v2
   subpackages:
   - bson
+- package: gopkg.in/yaml.v2
+excludeDirs:
+- examples
