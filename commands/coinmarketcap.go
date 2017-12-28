@@ -2,6 +2,7 @@ package commands
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -48,7 +49,7 @@ func (c *CoinMarket) GetInterval() time.Duration {
 }
 
 func (c *CoinMarket) Fetch() (results []*Item, err error) {
-	path := fmt.Sprintf("https://api.coinmarketcap.com/v1/ticker/?convert=%s&limit=10", c.Currency)
+	path := fmt.Sprintf("https://api.coinmarketcap.com/v1/ticker/?convert=%s", c.Currency)
 
 	client := &http.Client{}
 
@@ -71,9 +72,18 @@ func (c *CoinMarket) Fetch() (results []*Item, err error) {
 		return
 	}
 
-	lines := make([]string, 10)
+	length := len(cmResps)
+	if length == 0 {
+		err = errors.New("no response for coin market")
+		return
+	}
 
-	for i, m := range cmResps {
+	if length > 10 {
+		length = 10
+	}
+
+	lines := make([]string, length)
+	for i, m := range cmResps[:length] {
 		// Bitcoin $13925.90 ¥91564.88 -1.68% -3.68% -10.68% 📉
 		var chart string
 		if strings.HasPrefix(m.PercentChange1H, "-") {
