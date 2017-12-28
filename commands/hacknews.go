@@ -12,17 +12,21 @@ import (
 	. "github.com/bearyinnovative/lili/util"
 )
 
-type BaseHackerNews struct {
-	Notifiers    []NotifierType
+type HackerNewsSubscriber struct {
 	Name         string
+	Notifiers    []NotifierType
 	ShouldNotify func(*HNItem) bool
 }
 
-func (c *BaseHackerNews) GetName() string {
-	return "hackernews-" + c.Name
+type HackerNews struct {
+	Subscribers []*HackerNewsSubscriber
 }
 
-func (c *BaseHackerNews) GetInterval() time.Duration {
+func (c *HackerNews) GetName() string {
+	return "hackernews"
+}
+
+func (c *HackerNews) GetInterval() time.Duration {
 	return time.Minute * 15
 }
 
@@ -48,7 +52,7 @@ type HNItem struct {
 	URL      string `json:"url"`
 }
 
-func (c *BaseHackerNews) Fetch() (results []*Item, err error) {
+func (c *HackerNews) Fetch() (results []*Item, err error) {
 	// Create client
 	client := &http.Client{}
 
@@ -80,8 +84,8 @@ func (c *BaseHackerNews) Fetch() (results []*Item, err error) {
 	for idx, id := range ids[:30] {
 		wg.Add(1)
 		go func(idx, id int) {
-			item := c.getItem(client, idx, id)
-			if item != nil {
+			items := c.getItems(client, idx, id)
+			for _, item := range items {
 				ch <- item
 			}
 			wg.Done()
@@ -100,7 +104,7 @@ func (c *BaseHackerNews) Fetch() (results []*Item, err error) {
 	return
 }
 
-func (c *BaseHackerNews) getItem(client *http.Client, idx, id int) *Item {
+func (c *HackerNews) getItems(client *http.Client, idx, id int) []*Item {
 	// Create request
 	path := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", id)
 	req, err := http.NewRequest("GET", path, nil)
@@ -120,22 +124,28 @@ func (c *BaseHackerNews) getItem(client *http.Client, idx, id int) *Item {
 		return nil
 	}
 
-	if !c.ShouldNotify(&hnItem) {
+	if hnItem.URL == "" {
 		return nil
 	}
 
-	if hnItem.Comments == 0 && hnItem.URL == "" {
-		return nil
+	items := []*Item{}
+
+	for _, sub := range c.Subscribers {
+		if !sub.ShouldNotify(&hnItem) {
+			continue
+		}
+
+		commentPath := fmt.Sprintf("https://news.ycombinator.com/item?id=%d", hnItem.ID)
+		desc := fmt.Sprintf("[%s](%s)\nrank: %d, %d/[%d](%s)", hnItem.Title, hnItem.URL, idx, hnItem.Score, hnItem.Comments, commentPath)
+		items = append(items, &Item{
+			Name:       c.GetName() + "-" + sub.Name,
+			Identifier: fmt.Sprintf("hn_%s_%d", sub.Name, hnItem.ID),
+			Desc:       desc,
+			Ref:        hnItem.URL,
+			Created:    time.Unix(int64(hnItem.Time), 0),
+			Notifiers:  sub.Notifiers,
+		})
 	}
 
-	commentPath := fmt.Sprintf("https://news.ycombinator.com/item?id=%d", hnItem.ID)
-	desc := fmt.Sprintf("[%s](%s)\nrank: %d, %d/[%d](%s)", hnItem.Title, hnItem.URL, idx, hnItem.Score, hnItem.Comments, commentPath)
-	return &Item{
-		Name:       c.GetName(),
-		Identifier: fmt.Sprintf("hn_%s_%d", c.Name, hnItem.ID),
-		Desc:       desc,
-		Ref:        hnItem.URL,
-		Created:    time.Unix(int64(hnItem.Time), 0),
-		Notifiers:  c.Notifiers,
-	}
+	return items
 }

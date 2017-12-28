@@ -36,6 +36,7 @@ type Config struct {
 	} `yaml:"instagram"`
 
 	Hackernews []struct {
+		Name              string               `yaml:"name"`
 		Keywords          []string             `yaml:"keywords,omitempty"`
 		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
 		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
@@ -100,12 +101,14 @@ func (config *Config) ToCommandTypes() []CommandType {
 		}
 	}
 
+	var subscribers = []*HackerNewsSubscriber{}
 	for _, c := range config.Hackernews {
 		minScore := c.MinScore
 		minCommentCount := c.MinCommentCount
 		keywords := c.Keywords
 
-		results = append(results, &BaseHackerNews{
+		subscribers = append(subscribers, &HackerNewsSubscriber{
+			Name:      c.Name,
 			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
 			ShouldNotify: func(item *HNItem) bool {
 				if minScore > 0 && item.Score < minScore {
@@ -124,6 +127,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 			},
 		})
 	}
+	results = append(results, &HackerNews{Subscribers: subscribers})
 
 	for _, c := range config.HouseDeal {
 		if c.Name == "" || c.ShortName == "" {

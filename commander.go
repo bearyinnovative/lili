@@ -81,7 +81,7 @@ func fetchAndNotify(c CommandType) {
 		// notify
 		for _, n := range notifiers {
 			if IsDebug() {
-				log.Println("[DEBUG]", text, item.Images)
+				log.Println("[DEBUG NOTIFY]", text, item.Images)
 				continue
 			}
 
