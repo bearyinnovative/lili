@@ -120,7 +120,7 @@ func (c *BaseLBBuyOnline) Fetch() (results []*Item, err error) {
 			Identifier: c.GetName() + "-" + strconv.Itoa(data.AdID),
 			// vc001 (18; 100%) 124000.00 CNY (500 - 30000) https://localbitcoins.com/ad/644879
 			// **124000.00** CNY vc001 (18; 100%) (500 - 30000) https://localbitcoins.com/ad/644879
-			Desc:      fmt.Sprintf("[%s %s (%s - %s) %s](%s)", data.TempPrice, c.Currency, data.MinAmount, data.MaxAmount, data.Profile.Name, ad.Actions.PublicView),
+			Desc:      fmt.Sprintf("[$%s ¥%s %s (%s - %s) %s](%s)", data.TempPriceUsd, data.TempPrice, c.Currency, data.MinAmount, data.MaxAmount, data.Profile.Name, ad.Actions.PublicView),
 			Ref:       ad.Actions.PublicView,
 			Created:   data.CreatedAt,
 			Key:       prettyPriceInWan(data.TempPrice),
