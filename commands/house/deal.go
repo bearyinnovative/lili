@@ -1,7 +1,6 @@
 package house
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -12,48 +11,12 @@ import (
 	. "github.com/bearyinnovative/lili/util"
 )
 
-const (
-	pageCount = 100
-)
-
-var cityIdMap map[string]int
 var prefetchAll bool
 
 func init() {
 	prefetch := os.Getenv("LILI_PREFETCH_ALL_DEALS")
 	log.Println("LILI_PREFETCH_ALL_DEALS:", prefetch)
 	prefetchAll = prefetch == "1"
-
-	cityIdMap = map[string]int{
-		"北京":  110000,
-		"天津":  120000,
-		"上海":  310000,
-		"成都":  510100,
-		"南京":  320100,
-		"杭州":  330100,
-		"青岛":  370200,
-		"大连":  210200,
-		"厦门":  350200,
-		"武汉":  420100,
-		"深圳":  440300,
-		"重庆":  500000,
-		"长沙":  430100,
-		"西安":  610100,
-		"济南":  370101,
-		"石家庄": 130100,
-		"广州":  440100,
-		"东莞":  441900,
-		"佛山":  440600,
-		"合肥":  340100,
-		"烟台":  370600,
-		"中山":  442000,
-		"珠海":  440400,
-		"沈阳":  210100,
-		"苏州":  320500,
-		"廊坊":  131000,
-		"太原":  140100,
-		"惠州":  441300,
-	}
 }
 
 type BaseHouseDeal struct {
@@ -78,7 +41,7 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 
 	stop := false
 	offset := 0
-	limit := pageCount
+	limit := defaultPageCount
 
 	for !stop {
 		dealResp, err := fetchDeals(cityId, offset, limit)
@@ -157,13 +120,4 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 	log.Printf("[%s] finished\n", c.GetName())
 
 	return
-}
-
-func getCityIdFromName(name string) (int, error) {
-	id, present := cityIdMap[name]
-	if !present {
-		return -1, errors.New("can't find city id for: " + name)
-	}
-
-	return id, nil
 }
