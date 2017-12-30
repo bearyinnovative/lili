@@ -132,16 +132,14 @@ func (config *Config) ToCommandTypes() []CommandType {
 	}
 
 	for _, c := range config.HouseDeal {
-		if c.Name == "" || c.ShortName == "" {
-			log.Println("can't find names for house deal:", c)
+		notifiers := toNotifierTypes(c.Notifiers, c.TelegramNotifiers)
+		deal, err := house.NewHouseDeal(c.Name, notifiers)
+		if err != nil {
+			log.Println("Error:", err)
 			continue
 		}
 
-		results = append(results, &house.BaseHouseDeal{
-			CityName:      c.Name,
-			CityShortName: c.ShortName,
-			Notifiers:     toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
-		})
+		results = append(results, deal)
 	}
 
 	for _, c := range config.Instagram {

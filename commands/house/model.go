@@ -95,42 +95,49 @@ type HouseItem struct {
 	} `json:"color_tags,omitempty"`
 }
 
-var cityIdMap map[string]int = map[string]int{
-	"北京":  110000,
-	"天津":  120000,
-	"上海":  310000,
-	"成都":  510100,
-	"南京":  320100,
-	"杭州":  330100,
-	"青岛":  370200,
-	"大连":  210200,
-	"厦门":  350200,
-	"武汉":  420100,
-	"深圳":  440300,
-	"重庆":  500000,
-	"长沙":  430100,
-	"西安":  610100,
-	"济南":  370101,
-	"石家庄": 130100,
-	"广州":  440100,
-	"东莞":  441900,
-	"佛山":  440600,
-	"合肥":  340100,
-	"烟台":  370600,
-	"中山":  442000,
-	"珠海":  440400,
-	"沈阳":  210100,
-	"苏州":  320500,
-	"廊坊":  131000,
-	"太原":  140100,
-	"惠州":  441300,
+type CityInfo struct {
+	Name      string
+	Shortname string
+	Id        int
 }
 
-func getCityIdFromName(name string) (int, error) {
-	id, present := cityIdMap[name]
-	if !present {
-		return -1, errors.New("can't find city id for: " + name)
+var cityInfos []*CityInfo = []*CityInfo{
+	&CityInfo{"北京", "bj", 110000},
+	&CityInfo{"上海", "sh", 310000},
+	&CityInfo{"广州", "gz", 440100},
+	&CityInfo{"深圳", "sz", 440300},
+	&CityInfo{"天津", "tj", 120000},
+	&CityInfo{"成都", "cd", 510100},
+	&CityInfo{"南京", "nj", 320100},
+	&CityInfo{"杭州", "hz", 330100},
+	&CityInfo{"青岛", "qd", 370200},
+	&CityInfo{"大连", "dl", 210200},
+	&CityInfo{"厦门", "xm", 350200},
+	&CityInfo{"武汉", "wh", 420100},
+	&CityInfo{"重庆", "cq", 500000},
+	&CityInfo{"长沙", "cs", 430100},
+	&CityInfo{"西安", "xa", 610100},
+	&CityInfo{"济南", "jn", 370101},
+	&CityInfo{"石家庄", "sjz", 130100},
+	&CityInfo{"东莞", "dg", 441900},
+	&CityInfo{"佛山", "fs", 440600},
+	&CityInfo{"合肥", "hf", 340100},
+	&CityInfo{"烟台", "yt", 370600},
+	&CityInfo{"中山", "zs", 442000},
+	&CityInfo{"珠海", "zh", 440400},
+	&CityInfo{"沈阳", "sy", 210100},
+	&CityInfo{"苏州", "s", 320500},
+	&CityInfo{"廊坊", "lf", 131000},
+	&CityInfo{"太原", "ty", 140100},
+	&CityInfo{"惠州", "hui", 441300},
+}
+
+func getCityInfoFromName(name string) (*CityInfo, error) {
+	for _, info := range cityInfos {
+		if info.Name == name {
+			return info, nil
+		}
 	}
 
-	return id, nil
+	return nil, errors.New("can't find city for: " + name)
 }
