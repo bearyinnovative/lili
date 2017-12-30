@@ -79,6 +79,8 @@ func (i *Item) GetNotifyText(created, keyChanged bool) string {
 		return i.NotifyText
 	} else if keyChanged {
 		return fmt.Sprintf("%s (%s)", i.Desc, i.keyHistoryDesc())
+	} else if i.Created.IsZero() {
+		return i.Desc
 	} else {
 		return fmt.Sprintf("%s (%s)", i.Desc, humanize.Time(i.Created))
 	}

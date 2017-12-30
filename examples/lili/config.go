@@ -52,10 +52,18 @@ type Config struct {
 
 	HouseDeal []struct {
 		Name              string               `yaml:"name"`
-		ShortName         string               `yaml:"short_name"`
 		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
 		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
 	} `yaml:"house_deal"`
+
+	House []struct {
+		Name        string `yaml:"name"`
+		Subscribers []struct {
+			MinPrice          int                  `yaml:"min_price"`
+			Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
+			TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		} `yaml:"subscribers,omitempty"`
+	} `yaml:"house"`
 
 	LocalBitcoin []struct {
 		Currency          string               `yaml:"currency"`
@@ -101,13 +109,13 @@ func (config *Config) ToCommandTypes() []CommandType {
 		}
 	}
 
-	var subscribers = []*HackerNewsSubscriber{}
+	var hnSubs = []*HackerNewsSubscriber{}
 	for _, c := range config.Hackernews {
 		minScore := c.MinScore
 		minCommentCount := c.MinCommentCount
 		keywords := c.Keywords
 
-		subscribers = append(subscribers, &HackerNewsSubscriber{
+		hnSubs = append(hnSubs, &HackerNewsSubscriber{
 			Name:      c.Name,
 			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
 			ShouldNotify: func(item *HNItem) bool {
@@ -127,8 +135,8 @@ func (config *Config) ToCommandTypes() []CommandType {
 			},
 		})
 	}
-	if len(subscribers) > 0 {
-		results = append(results, &HackerNews{Subscribers: subscribers})
+	if len(hnSubs) > 0 {
+		results = append(results, &HackerNews{Subscribers: hnSubs})
 	}
 
 	for _, c := range config.HouseDeal {
@@ -140,6 +148,28 @@ func (config *Config) ToCommandTypes() []CommandType {
 		}
 
 		results = append(results, deal)
+	}
+
+	for _, c := range config.House {
+		subs := []*house.HouseSubscriber{}
+		for _, s := range c.Subscribers {
+			notifiers := toNotifierTypes(s.Notifiers, s.TelegramNotifiers)
+			subs = append(subs, &house.HouseSubscriber{
+				Notifiers: notifiers,
+				ShouldNotify: func(hi *house.HouseItem) bool {
+					return true
+				},
+			})
+		}
+
+		cmd, err := house.NewHouseSecondHand(c.Name, subs)
+		if err != nil {
+			log.Println("Error:", err)
+			continue
+		}
+
+		// log.Printf("appending %s with %d subscribers", c.Name, len(subs))
+		results = append(results, cmd)
 	}
 
 	for _, c := range config.Instagram {

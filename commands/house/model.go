@@ -43,8 +43,8 @@ type DealItem struct {
 	BuildingType        string  `json:"building_type,omitempty"`
 	RequireLogin        int     `json:"require_login"`
 
-	FetchedAt time.Time
-	CityId    int
+	FetchedAt time.Time `json:"-"`
+	CityId    int       `json:"-"`
 }
 
 type HouseResponse struct {
@@ -93,6 +93,13 @@ type HouseItem struct {
 		Desc  string `json:"desc"`
 		Color string `json:"color"`
 	} `json:"color_tags,omitempty"`
+
+	// db 数据创建时间
+	FetchedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+
+	CityId        int   `json:"-"`
+	HistoryPrices []int `json:"-"`
 }
 
 type CityInfo struct {

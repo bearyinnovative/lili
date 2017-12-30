@@ -28,6 +28,6 @@ func TestConfigToCommands(t *testing.T) {
 	t.Logf("generated %d commands\n", len(commands))
 
 	for _, c := range commands {
-		t.Logf("%s: %d\n", c.GetName(), len(c.GetNotifiers()))
+		t.Logf("%s\n", c.GetName())
 	}
 }

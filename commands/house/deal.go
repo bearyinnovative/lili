@@ -63,7 +63,7 @@ func (c *HouseDeal) Fetch() (results []*Item, err error) {
 			dealResp.Data.TotalCount)
 
 		if dealResp.Errno != 0 {
-			log.Printf("[%s] ERROR: %d, %s", c.GetName(), dealResp.Errno, dealResp.Error)
+			log.Printf("[%s] ERROR: %d, %s\n", c.GetName(), dealResp.Errno, dealResp.Error)
 			break
 		}
 

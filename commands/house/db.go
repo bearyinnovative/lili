@@ -13,6 +13,7 @@ import (
 )
 
 var dealCollection *mgo.Collection
+var houseCollection *mgo.Collection
 
 func init() {
 	mongoServer := os.Getenv("MONGO_SERVER")
@@ -30,12 +31,12 @@ func init() {
 	session.SetMode(mgo.Monotonic, true)
 
 	dealCollection = session.DB("house").C("deals")
+	houseCollection = session.DB("house").C("houses")
 
 	log.Println("house mongo setup success")
 }
 
 func upsertDeal(d *DealItem) (bool, error) {
-	// return false, errors.New("unimplemented")
 	query := bson.M{
 		"housecode": d.HouseCode,
 	}
@@ -53,7 +54,6 @@ func upsertDeal(d *DealItem) (bool, error) {
 			return false, err
 		}
 
-		// d.JustCreated = true
 		return true, nil
 	}
 
@@ -71,4 +71,52 @@ func upsertDeal(d *DealItem) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// return if created OR changed
+func upsertHouse(h *HouseItem) (bool, error) {
+	h.UpdatedAt = time.Now()
+
+	query := bson.M{
+		"housecode": h.HouseCode,
+	}
+	count, err := houseCollection.Find(query).Count()
+	if LogIfErr(err) {
+		return false, err
+	}
+	if count > 1 {
+		return false, errors.New("more than one deal with same house code")
+	}
+
+	if count == 0 {
+		h.FetchedAt = h.UpdatedAt
+
+		err = houseCollection.Insert(h)
+		if LogIfErr(err) {
+			return false, err
+		}
+
+		return true, nil
+	}
+
+	var old *HouseItem
+	err = houseCollection.Find(query).One(&old)
+	if LogIfErr(err) {
+		return false, err
+	}
+
+	h.FetchedAt = old.FetchedAt
+
+	// price changed, append to price history
+	priceChanged := h.Price != old.Price
+	if priceChanged {
+		h.HistoryPrices = append(old.HistoryPrices, old.Price)
+	}
+
+	err = houseCollection.Update(query, h)
+	if LogIfErr(err) {
+		return false, err
+	}
+
+	return priceChanged, nil
 }
