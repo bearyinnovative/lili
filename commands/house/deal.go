@@ -70,10 +70,6 @@ func (c *BaseHouseDeal) GetInterval() time.Duration {
 	return time.Hour * 8
 }
 
-func (c *BaseHouseDeal) GetNotifiers() []NotifierType {
-	return c.Notifiers
-}
-
 func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 	cityId, err := getCityIdFromName(c.CityName)
 	if LogIfErr(err) {
@@ -140,9 +136,10 @@ func (c *BaseHouseDeal) Fetch() (results []*Item, err error) {
 				// 南岭花园 1室1厅 29.24㎡ 南 | 简装 | 低楼层/1层 | 板楼 总价: 648000 单价: 22162 成交时间 2017.11.04
 				Desc: fmt.Sprintf("**NEW DEAL** %s %s %s | %s | %s | %s 总价: %.1f万 单价: %.4f万 成交时间: %s [Link](%s)",
 					c.CityName, di.Title, di.Orientation, di.Decoration, di.FloorState, di.BuildingType, float64(di.Price)/10000.0, float64(di.UnitPrice)/10000.0, di.SignDate, ref),
-				Ref:     ref,
-				Created: createdAt,
-				Images:  images,
+				Ref:       ref,
+				Created:   createdAt,
+				Images:    images,
+				Notifiers: c.Notifiers,
 			}
 
 			results = append(results, item)

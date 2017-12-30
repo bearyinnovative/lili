@@ -127,7 +127,9 @@ func (config *Config) ToCommandTypes() []CommandType {
 			},
 		})
 	}
-	results = append(results, &HackerNews{Subscribers: subscribers})
+	if len(subscribers) > 0 {
+		results = append(results, &HackerNews{Subscribers: subscribers})
+	}
 
 	for _, c := range config.HouseDeal {
 		if c.Name == "" || c.ShortName == "" {
