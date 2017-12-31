@@ -47,6 +47,7 @@ type DealItem struct {
 	CityId    int       `json:"-"`
 }
 
+// searchv4
 type HouseResponse struct {
 	RequestID string `json:"request_id"`
 	Errno     int    `json:"errno"`
@@ -102,6 +103,35 @@ type HouseItem struct {
 	HistoryPrices []int `json:"-"`
 }
 
+type CommunityResponse struct {
+	Errno int `json:"errno"`
+	Data  struct {
+		TotalCount  int              `json:"total_count"`
+		HasMoreData int              `json:"has_more_data"`
+		List        []*CommunityItem `json:"list"`
+	} `json:"data"`
+	RequestID string `json:"request_id"`
+	Cost      int    `json:"cost"`
+	Error     string `json:"error"`
+}
+
+type CommunityItem struct {
+	BuildingFinishYear    string `json:"building_finish_year"`
+	CoverPic              string `json:"cover_pic"`
+	ErshoufangSourceCount int    `json:"ershoufang_source_count"`
+	NeoDesc               string `json:"neo_desc"`
+	BizcircleName         string `json:"bizcircle_name"`
+	// Schema                 string `json:"schema"`
+	CommunityName string `json:"community_name"`
+	CommunityID   string `json:"community_id"`
+	// Image                  string `json:"image"`
+	BuildingType           string `json:"building_type"`
+	AvgUnitPrice           string `json:"avg_unit_price"`
+	ErshoufangAvgUnitPrice int    `json:"ershoufang_avg_unit_price"`
+	MURL                   string `json:"m_url"`
+	DistrictName           string `json:"district_name"`
+}
+
 type CityInfo struct {
 	Name      string
 	Shortname string
@@ -110,7 +140,7 @@ type CityInfo struct {
 
 var cityInfos []*CityInfo = []*CityInfo{
 	&CityInfo{"北京", "bj", 110000},
-	&CityInfo{"上海", "sh", 310000},
+	// &CityInfo{"上海", "sh", 310000}, // 上海的 API 不一样.. 暂时不支持
 	&CityInfo{"广州", "gz", 440100},
 	&CityInfo{"深圳", "sz", 440300},
 	&CityInfo{"天津", "tj", 120000},

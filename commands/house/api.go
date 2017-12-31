@@ -81,17 +81,20 @@ order:
 	co12: 面积从大到小
 	co32: 最新发布
 */
-func fetchHouse(cityId, offset, limit int) (result *HouseResponse, err error) {
-	// curl 'https://app.api.lianjia.com/house/ershoufang/searchv4?city_id=440100&order=co32&priceRequest=&limit_offset=220&tagsText=&communityRequset=&moreRequest=&is_suggestion=0&limit_count=20&sugQueryStr=&comunityIdRequest=&areaRequest=&is_history=0&schoolRequest=&condition=&roomRequest=&isFromMap=false&request_ts=1514603575' -H 'Page-Schema: erShou%2Flist' -H 'Referer: SecondHandHouseHomePage%3Fcity_id%3D440100' -H 'Cookie: lianjia_udid=865441034412262;lianjia_ssid=8b337dd7-7988-4777-8dfe-7b9125a9f3c4;lianjia_uuid=c5802203-4b02-42f8-9251-9418818b675a' -H 'User-Agent: HomeLink7.12.1;Xiaomi MI+6; Android 7.1.1' -H 'Lianjia-Channel: Android_Baidu' -H 'Lianjia-Device-Id: 865441034412262' -H 'Lianjia-Version: 7.12.1' -H 'Authorization: MjAxNzAzMjRfYW5kcm9pZDo4MWYyMGE0NzlmMmJjNzI5Y2Y0NWU4NTc3NDMyMTE2N2U5MWFkOWIy' -H 'Lianjia-Im-Version: 2.2.0' -H 'Host: app.api.lianjia.com' -H 'Connection: Keep-Alive' -H 'Accept-Encoding: gzip' --compressed
+func fetchHouse(cityId, offset, limit int, comm *CommunityItem) (result *HouseResponse, err error) {
+	// https://app.api.lianjia.com/house/ershoufang/searchv4?city_id=440100&priceRequest=&limit_offset=100&communityRequset=&moreRequest=&is_suggestion=0&limit_count=20&sugQueryStr=rs金碧花园第一金碧&comunityIdRequest=c2110343238860955&areaRequest=&is_history=1&schoolRequest=&condition=c2110343238860955rs金碧花园第一金碧&roomRequest=&isFromMap=false&queryStringText=金碧花园第一金碧&request_ts=1514693279
+	// https: //app.api.lianjia.com/house/ershoufang/searchv4?comunityIdRequest=c2411100803806&city_id=440300&sugCodition=c2411100803806&is_history=0&limit_offset=0&condition=c2411100803806&queryStringText=%E7%BF%A1%E7%BF%A0%E6%98%8E%E7%8F%A0%E8%8A%B1%E5%9B%AD&isFromMap=false&is_suggestion=1&limit_count=20&request_ts=1514725482
 
 	path := fmt.Sprintf(
 		"https://app.api.lianjia.com/house/ershoufang/searchv4"+
-			"?city_id=%d&limit_offset=%d&limit_count=%d",
-		// "&order=%s",
+			"?city_id=%d&limit_offset=%d&limit_count=%d"+
+			"&order=co32&is_history=1"+
+			"&sugQueryStr=rs%s&comunityIdRequest=c%s&condition=c%srs%s", // comunityIdRequest is typo as same as the android client
 		// "&priceRequest=&tagsText=&communityRequset=&moreRequest=&sugQueryStr=&comunityIdRequest=&areaRequest="+
 		// "&schoolRequest=&condition=&roomRequest="+
 		// "&is_suggestion=0&is_history=0&isFromMap=false",
-		cityId, offset, limit)
+		cityId, offset, limit,
+		comm.CommunityName, comm.CommunityID, comm.CommunityID, comm.CommunityName)
 
 	log.Println("fetching", path)
 
@@ -114,6 +117,39 @@ func fetchHouse(cityId, offset, limit int) (result *HouseResponse, err error) {
 	// fmt.Println("response Status : ", resp.Status)
 	// fmt.Println("response Headers : ", resp.Header)
 	// fmt.Println("response Body : ", string(respBody))
+
+	decoder := json.NewDecoder(resp.Body)
+
+	err = decoder.Decode(&result)
+	if LogIfErr(err) {
+		return
+	}
+
+	return
+}
+
+// https://app.api.lianjia.com/house/community/search?min_build_year=0&max_build_year=10&city_id=440100&limit_offset=0&limit_count=20&request_ts=1514693664
+// limit > 20 会报错
+func fetchCommunicates(cityId, offset, limit, minBuildYear, maxBuildYear int) (result *CommunityResponse, err error) {
+	path := fmt.Sprintf(
+		"https://app.api.lianjia.com/house/community/search"+
+			"?city_id=%d&limit_offset=%d&limit_count=%d"+
+			"&min_build_year=%d&max_build_year=%d",
+		cityId, offset, limit, minBuildYear, maxBuildYear)
+
+	log.Println("fetching", path)
+
+	// Create request
+	req, err := makeCommonGetRequest(path)
+	if LogIfErr(err) {
+		return
+	}
+
+	resp, err := client.Do(req)
+	if LogIfErr(err) {
+		return
+	}
+	defer resp.Body.Close()
 
 	decoder := json.NewDecoder(resp.Body)
 

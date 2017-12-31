@@ -76,6 +76,7 @@ func (db *Database) UpsertItem(h *Item) (bool, bool, error) {
 			return false, keyChanged, err
 		}
 
+		keyChanged = len(h.KeyHistory) > 0
 		return true, keyChanged, nil
 	}
 
