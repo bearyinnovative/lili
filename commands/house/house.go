@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	. "github.com/bearyinnovative/lili/model"
@@ -160,21 +161,31 @@ func (c *HouseSecondHand) fetchAllHouses(communityItem *CommunityItem) (results 
 
 				// start create notify item
 				var images []string = nil
-				if hi.CoverPic != "" {
+				// 1490190291phpfo1bOJ.png.280x210.jpg is a empty place holder img
+				if !strings.Contains(hi.CoverPic, "1490190291phpfo1bOJ.png.280x210.jpg") {
 					images = []string{hi.CoverPic}
 				}
 
+				// log.Printf("%+v", hi)
 				ref := fmt.Sprintf("https://%s.lianjia.com/ershoufang/%s.html", c.cityInfo.Shortname, hi.HouseCode)
 				item := &Item{
 					Name:       c.GetName(),
 					Identifier: c.GetName() + "-" + hi.HouseCode,
-					// 九龙湖传承别墅 独享私家园林湖景 7室3厅/879.41㎡/南 北/玖珑湖悦源庄 2022.7万
-					Desc: fmt.Sprintf("%s %s %s%s\n%s",
-						hi.Title, hi.Desc, hi.PriceStr, hi.PriceUnit, ref),
+					/*
+						370万(-2483) 1室1厅/70.27㎡/北/新龙城 回龙观/2006
+						https://bj.lianjia.com/ershoufang/101102424514.html
+					*/
+					Desc: fmt.Sprintf("%s%s(%d) %s %s %s\n%s",
+						hi.PriceStr, hi.PriceUnit, hi.UnitPrice-communityItem.ErshoufangAvgUnitPrice,
+						// hi.BlueprintHallNum, hi.BlueprintBedroomNum, hi.Area,
+						hi.Desc,
+						communityItem.BizcircleName, communityItem.BuildingFinishYear,
+						ref),
 					Ref:        ref,
 					Images:     images,
 					Key:        convertPrice(hi.Price),
 					KeyHistory: hi.historyPriceInStrings(),
+					Created:    hi.getCreateTime(),
 					Notifiers:  sub.Notifiers,
 					ItemFlags:  DoNotCheckTooOld,
 				}
@@ -210,6 +221,19 @@ func (hi *HouseItem) historyPriceInStrings() []string {
 	}
 
 	return results
+}
+
+func (hi *HouseItem) getCreateTime() time.Time {
+	for _, info := range hi.InfoList {
+		if strings.HasPrefix(info.Name, "挂牌") {
+			t, err := time.ParseInLocation("2006.01.02", info.Value, time.Local)
+			if !LogIfErr(err) {
+				return t
+			}
+		}
+	}
+
+	return time.Time{}
 }
 
 func (c *HouseSecondHand) log(format string, v ...interface{}) {

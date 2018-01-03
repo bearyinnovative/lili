@@ -92,8 +92,15 @@ func (c *CoinMarket) Fetch() (results []*Item, err error) {
 			chart = "📈"
 		}
 
-		lines[i] = fmt.Sprintf("%s $%s ¥%s %s%% %s%% %s%% %s",
-			m.Name, prettyPriceRound2(m.PriceUsd), prettyPriceRound2(m.PriceCny),
+		secondPrice := ""
+		if m.ID == "bitcoin" {
+			secondPrice = "¥" + prettyPriceRound2(m.PriceCny)
+		} else {
+			secondPrice = m.PriceBtc
+		}
+
+		lines[i] = fmt.Sprintf("%s $%s %s %s%% %s%% %s%% %s",
+			m.Name, prettyPriceRound2(m.PriceUsd), secondPrice,
 			m.PercentChange1H, m.PercentChange24H, m.PercentChange7D, chart)
 	}
 

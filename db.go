@@ -67,10 +67,6 @@ func (db *Database) UpsertItem(h *Item) (bool, bool, error) {
 	h.Updated = time.Now()
 
 	if count == 0 {
-		if h.Created.IsZero() {
-			h.Created = h.Updated
-		}
-
 		err = db.itemColl.Insert(h)
 		if LogIfErr(err) {
 			return false, keyChanged, err
