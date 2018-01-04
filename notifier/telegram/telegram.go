@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type Notifier struct {
@@ -37,10 +39,15 @@ func (n *Notifier) Notify(text string, images []string) error {
 		values["caption"] = text
 		values["media"] = mediaPhotos
 	} else if imageCount == 1 {
-		method = "sendPhoto"
+		if strings.HasSuffix(images[0], "gif") {
+			method = "sendDocument"
+			values["document"] = images[0]
+		} else {
+			method = "sendPhoto"
+			values["photo"] = images[0]
+		}
 
 		values["caption"] = text
-		values["photo"] = images[0]
 	} else {
 		method = "sendMessage"
 
@@ -85,7 +92,9 @@ func (n *Notifier) send(method string, values interface{}) error {
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return errors.New(fmt.Sprintf("status code error: %d", resp.StatusCode))
+		defer resp.Body.Close()
+		b, _ := ioutil.ReadAll(resp.Body)
+		return errors.New(fmt.Sprintf("status code error: %d %s", resp.StatusCode, string(b)))
 	}
 
 	return nil

@@ -110,6 +110,7 @@ func (c *HouseDeal) Fetch() (results []*Item, err error) {
 				Created:   createdAt,
 				Images:    images,
 				Notifiers: c.notifiers,
+				ItemFlags: DoNotCheckTooOld,
 			}
 
 			results = append(results, item)

@@ -78,6 +78,16 @@ type Config struct {
 		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
 		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
 	} `yaml:"coinmarket"`
+
+	Reddit []struct {
+		Subreddits        []string             `yaml:"subreddits"`
+		Interval          int                  `yaml:"interval"`
+		MinUpsRatio       float64              `yaml:"min_ups_ratio"`
+		ImageOnly         bool                 `yaml:"image_only"`
+		MinScore          int                  `yaml:"min_score"`
+		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
+		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+	} `yaml:"reddit"`
 }
 
 func (config *Config) ToCommandTypes() []CommandType {
@@ -239,6 +249,31 @@ func (config *Config) ToCommandTypes() []CommandType {
 			Interval:  c.Interval,
 			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
 		})
+	}
+
+	for _, c := range config.Reddit {
+		if c.Interval <= 0 {
+			c.Interval = 5
+		}
+		if c.MinUpsRatio < 0 || c.MinUpsRatio > 1 {
+			c.MinUpsRatio = 0
+		}
+
+		for _, subreddit := range c.Subreddits {
+			if subreddit == "" {
+				log.Println("need subreddit")
+				continue
+			}
+
+			results = append(results, &Reddit{
+				Subreddit:   subreddit,
+				Interval:    c.Interval,
+				ImageOnly:   c.ImageOnly,
+				MinUpsRatio: c.MinUpsRatio,
+				MinScore:    c.MinScore,
+				Notifiers:   toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+			})
+		}
 	}
 
 	return results
