@@ -23,7 +23,7 @@ type ConfigNotifier struct {
 	ToUser    string `yaml:"to_user,omitempty"`
 	ToChannel string `yaml:"to_channel,omitempty"`
 
-	// telegram
+	// telegram/telegram.media
 	Token string `yaml:"token"`
 	// `@channel_name` or integer id as string: `-123456`
 	ChatID    string `yaml:"chat_id"`
@@ -48,6 +48,8 @@ func (cn *ConfigNotifier) toNotifierType() NotifierType {
 			ChatID:    cn.ChatID,
 			ParseMode: cn.ParseMode,
 		}
+	case "telegram.media":
+		return telegram.NewMediaNotifier(cn.Token, cn.ChatID)
 	default:
 		log.Fatal("type unknown:", cn.Type)
 		return nil
