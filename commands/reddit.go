@@ -106,7 +106,7 @@ type Reddit struct {
 
 	// optional
 	Interval    int // in minutes
-	ImageOnly   bool
+	MediaOnly   bool
 	MinUpsRatio float64 // 0~1
 	MinScore    int
 
@@ -161,17 +161,25 @@ func (c *Reddit) Fetch() (results []*Item, err error) {
 
 		// try find image
 		images := data.tryGetImages()
-		if c.ImageOnly && len(images) == 0 {
+		if c.MediaOnly && len(images) == 0 {
 			continue
 		}
 
 		ref := "http://reddit.com" + data.Permalink
+
+		var desc string
+		var created time.Time
+		if !c.MediaOnly {
+			desc = fmt.Sprintf("%s %s", data.Title, ref)
+			created = time.Unix(int64(data.CreatedUtc), 0)
+		}
+
 		item := &Item{
 			Name:       c.GetName(),
 			Identifier: c.GetName() + "-" + data.ID,
-			Desc:       fmt.Sprintf("%s %s", data.Title, ref),
+			Desc:       desc,
 			Ref:        ref,
-			Created:    time.Unix(int64(data.CreatedUtc), 0),
+			Created:    created,
 			Notifiers:  c.Notifiers,
 			Images:     images,
 		}

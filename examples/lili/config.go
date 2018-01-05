@@ -116,7 +116,7 @@ type Config struct {
 		Subreddits  []string          `yaml:"subreddits"`
 		Interval    int               `yaml:"interval"`
 		MinUpsRatio float64           `yaml:"min_ups_ratio"`
-		ImageOnly   bool              `yaml:"image_only"`
+		MediaOnly   bool              `yaml:"media_only"`
 		MinScore    int               `yaml:"min_score"`
 		Notifiers   []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"reddit"`
@@ -314,7 +314,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 			results = append(results, &Reddit{
 				Subreddit:   subreddit,
 				Interval:    c.Interval,
-				ImageOnly:   c.ImageOnly,
+				MediaOnly:   c.MediaOnly,
 				MinUpsRatio: c.MinUpsRatio,
 				MinScore:    c.MinScore,
 				Notifiers:   toNotifierTypes(c.Notifiers),
