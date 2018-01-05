@@ -15,78 +15,107 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+type ConfigNotifier struct {
+	Type string `yaml:"type"`
+
+	// bearychat.incoming
+	URL       string `yaml:"url"`
+	ToUser    string `yaml:"to_user,omitempty"`
+	ToChannel string `yaml:"to_channel,omitempty"`
+
+	// telegram
+	Token string `yaml:"token"`
+	// `@channel_name` or integer id as string: `-123456`
+	ChatID    string `yaml:"chat_id"`
+	ParseMode string `yaml:"parse_mode,omitempty"`
+}
+
+func (cn *ConfigNotifier) toNotifierType() NotifierType {
+	switch cn.Type {
+	case "bearychat.incoming":
+		if cn.URL == "" {
+			log.Fatal("can't find")
+			return nil
+		}
+		return &IncomingNotifier{
+			URL:       cn.URL,
+			ToUser:    cn.ToUser,
+			ToChannel: cn.ToChannel,
+		}
+	case "telegram":
+		return &telegram.Notifier{
+			Token:     cn.Token,
+			ChatID:    cn.ChatID,
+			ParseMode: cn.ParseMode,
+		}
+	default:
+		log.Fatal("type unknown:", cn.Type)
+		return nil
+	}
+}
+
 type Config struct {
 	Zhihu []struct {
-		Keywords          []string             `yaml:"keywords"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		Keywords  []string          `yaml:"keywords"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"zhihu"`
 
 	V2EX []struct {
-		Keywords          []string             `yaml:"keywords"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		Keywords  []string          `yaml:"keywords"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"v2ex"`
 
 	Instagram []struct {
-		Tags              []string             `yaml:"tags,omitempty"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
-		Usernames         []string             `yaml:"usernames,omitempty"`
+		Tags      []string          `yaml:"tags,omitempty"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+		Usernames []string          `yaml:"usernames,omitempty"`
 	} `yaml:"instagram"`
 
 	Hackernews []struct {
-		Name              string               `yaml:"name"`
-		Keywords          []string             `yaml:"keywords,omitempty"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
-		MinScore          int                  `yaml:"min_score,omitempty"`
-		MinCommentCount   int                  `yaml:"min_comment_count,omitempty"`
+		Name            string            `yaml:"name"`
+		Keywords        []string          `yaml:"keywords,omitempty"`
+		Notifiers       []*ConfigNotifier `yaml:notifiers,omitempty`
+		MinScore        int               `yaml:"min_score,omitempty"`
+		MinCommentCount int               `yaml:"min_comment_count,omitempty"`
 	} `yaml:"hackernews"`
 
 	Douban []struct {
-		ID                string               `yaml:"id"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		ID        string            `yaml:"id"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"douban"`
 
 	HouseDeal []struct {
-		Name              string               `yaml:"name"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		Name      string            `yaml:"name"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"house_deal"`
 
 	House []struct {
 		Name        string `yaml:"name"`
 		Subscribers []struct {
-			MinPrice          int                  `yaml:"min_price"`
-			Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-			TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+			MinPrice  int               `yaml:"min_price"`
+			Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 		} `yaml:"subscribers,omitempty"`
 	} `yaml:"house"`
 
 	LocalBitcoin []struct {
-		Currency          string               `yaml:"currency"`
-		Interval          int                  `yaml:"interval"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		Currency  string            `yaml:"currency"`
+		Interval  int               `yaml:"interval"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"localbitcoin"`
 
 	CoinMarket []struct {
-		Currency          string               `yaml:"currency"`
-		Interval          int                  `yaml:"interval"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		Currency  string            `yaml:"currency"`
+		Interval  int               `yaml:"interval"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"coinmarket"`
 
 	Reddit []struct {
-		Subreddits        []string             `yaml:"subreddits"`
-		Interval          int                  `yaml:"interval"`
-		MinUpsRatio       float64              `yaml:"min_ups_ratio"`
-		ImageOnly         bool                 `yaml:"image_only"`
-		MinScore          int                  `yaml:"min_score"`
-		Notifiers         []*IncomingNotifier  `yaml:"notifiers,omitempty"`
-		TelegramNotifiers []*telegram.Notifier `yaml:"telegram_notifiers,omitempty"`
+		Subreddits  []string          `yaml:"subreddits"`
+		Interval    int               `yaml:"interval"`
+		MinUpsRatio float64           `yaml:"min_ups_ratio"`
+		ImageOnly   bool              `yaml:"image_only"`
+		MinScore    int               `yaml:"min_score"`
+		Notifiers   []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"reddit"`
 }
 
@@ -102,7 +131,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 
 		results = append(results, &DoubanStatus{
 			ID:        c.ID,
-			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+			Notifiers: toNotifierTypes(c.Notifiers),
 		})
 	}
 
@@ -113,7 +142,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 			}
 
 			results = append(results, &BaseZhihu{
-				Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+				Notifiers: toNotifierTypes(c.Notifiers),
 				Query:     keyword,
 			})
 		}
@@ -127,7 +156,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 
 		hnSubs = append(hnSubs, &HackerNewsSubscriber{
 			Name:      c.Name,
-			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+			Notifiers: toNotifierTypes(c.Notifiers),
 			ShouldNotify: func(item *HNItem) bool {
 				if minScore > 0 && item.Score < minScore {
 					return false
@@ -150,7 +179,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 	}
 
 	for _, c := range config.HouseDeal {
-		notifiers := toNotifierTypes(c.Notifiers, c.TelegramNotifiers)
+		notifiers := toNotifierTypes(c.Notifiers)
 		deal, err := house.NewHouseDeal(c.Name, notifiers)
 		if err != nil {
 			log.Println("Error:", err)
@@ -163,7 +192,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 	for _, c := range config.House {
 		subs := []*house.HouseSubscriber{}
 		for _, s := range c.Subscribers {
-			notifiers := toNotifierTypes(s.Notifiers, s.TelegramNotifiers)
+			notifiers := toNotifierTypes(s.Notifiers)
 			subs = append(subs, &house.HouseSubscriber{
 				Notifiers: notifiers,
 				ShouldNotify: func(hi *house.HouseItem) bool {
@@ -188,7 +217,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 				continue
 			}
 
-			notifiers := toNotifierTypes(c.Notifiers, c.TelegramNotifiers)
+			notifiers := toNotifierTypes(c.Notifiers)
 			results = append(results, NewTagInstagram(notifiers, tag))
 		}
 
@@ -197,7 +226,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 				continue
 			}
 
-			notifiers := toNotifierTypes(c.Notifiers, c.TelegramNotifiers)
+			notifiers := toNotifierTypes(c.Notifiers)
 			results = append(results, NewUserInstagram(notifiers, username))
 		}
 	}
@@ -209,7 +238,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 			}
 
 			results = append(results, &BaseV2EX{
-				Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+				Notifiers: toNotifierTypes(c.Notifiers),
 				Query:     keyword,
 			})
 		}
@@ -229,7 +258,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 		results = append(results, &BaseLBBuyOnline{
 			Currency:  c.Currency,
 			Interval:  c.Interval,
-			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+			Notifiers: toNotifierTypes(c.Notifiers),
 		})
 	}
 
@@ -247,7 +276,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 		results = append(results, &CoinMarket{
 			Currency:  c.Currency,
 			Interval:  c.Interval,
-			Notifiers: toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+			Notifiers: toNotifierTypes(c.Notifiers),
 		})
 	}
 
@@ -271,7 +300,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 				ImageOnly:   c.ImageOnly,
 				MinUpsRatio: c.MinUpsRatio,
 				MinScore:    c.MinScore,
-				Notifiers:   toNotifierTypes(c.Notifiers, c.TelegramNotifiers),
+				Notifiers:   toNotifierTypes(c.Notifiers),
 			})
 		}
 	}
@@ -291,16 +320,14 @@ func checkContains(title string, keywords []string) bool {
 	return false
 }
 
-func toNotifierTypes(notifiers []*IncomingNotifier, telegramNotifiers []*telegram.Notifier) []NotifierType {
-	len1, len2 := len(notifiers), len(telegramNotifiers)
-	results := make([]NotifierType, len1+len2)
+func toNotifierTypes(notifiers []*ConfigNotifier) []NotifierType {
+	results := []NotifierType{}
 
 	for i := range notifiers {
-		results[i] = notifiers[i]
-	}
-
-	for i := range telegramNotifiers {
-		results[i+len1] = telegramNotifiers[i]
+		n := notifiers[i].toNotifierType()
+		if n != nil {
+			results = append(results, n)
+		}
 	}
 
 	return results
