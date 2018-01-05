@@ -65,9 +65,12 @@ func (i *Item) GetValidNotifiers(created, keyChanged bool) []NotifierType {
 		return i.Notifiers
 	}
 
-	checkTooOldPassed := i.Created.IsZero() || (i.ItemFlags&DoNotCheckTooOld > 0) || i.InDays(7)
+	if keyChanged {
+		return i.Notifiers
+	}
 
-	if (created || keyChanged) && checkTooOldPassed {
+	checkTooOldPassed := i.Created.IsZero() || (i.ItemFlags&DoNotCheckTooOld > 0) || i.InDays(7)
+	if created && checkTooOldPassed {
 		return i.Notifiers
 	}
 

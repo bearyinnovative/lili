@@ -187,7 +187,6 @@ func (c *HouseSecondHand) fetchAllHouses(communityItem *CommunityItem) (results 
 					KeyHistory: hi.historyPriceInStrings(),
 					Created:    hi.getCreateTime(),
 					Notifiers:  sub.Notifiers,
-					ItemFlags:  DoNotCheckTooOld,
 				}
 
 				results = append(results, item)
