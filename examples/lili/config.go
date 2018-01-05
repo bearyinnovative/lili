@@ -11,6 +11,7 @@ import (
 	. "github.com/bearyinnovative/lili/notifier"
 	. "github.com/bearyinnovative/lili/notifier/bearychat"
 	"github.com/bearyinnovative/lili/notifier/telegram"
+	. "github.com/bearyinnovative/lili/util"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -119,6 +120,20 @@ type Config struct {
 		MinScore    int               `yaml:"min_score"`
 		Notifiers   []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"reddit"`
+
+	Tumblr []struct {
+		Name      string `yaml:"name"`
+		Type      string `yaml:"type"`
+		MediaOnly bool   `yaml:"media_only"`
+
+		ConsumerKey    string `yaml:"consumer_key"`
+		ConsumerSecret string `yaml:"consumer_secret"`
+		Token          string `yaml:"token"`
+		TokenSecret    string `yaml:"token_secret"`
+
+		Interval  int               `yaml:"interval"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+	} `yaml:"tumblr"`
 }
 
 func (config *Config) ToCommandTypes() []CommandType {
@@ -305,6 +320,20 @@ func (config *Config) ToCommandTypes() []CommandType {
 				Notifiers:   toNotifierTypes(c.Notifiers),
 			})
 		}
+	}
+
+	for _, c := range config.Tumblr {
+		// default interval 120 min
+		if c.Interval <= 0 {
+			c.Interval = 120
+		}
+
+		t, err := NewTumblr(c.Name, c.Type, c.ConsumerKey, c.ConsumerSecret, c.Token, c.TokenSecret, c.Interval, c.MediaOnly, toNotifierTypes(c.Notifiers))
+		if LogIfErr(err) {
+			continue
+		}
+
+		results = append(results, t)
 	}
 
 	return results
