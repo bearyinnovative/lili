@@ -134,6 +134,19 @@ type Config struct {
 		Interval  int               `yaml:"interval"`
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"tumblr"`
+
+	Flickr []struct {
+		Name   string `yaml:"name"`
+		Method string `yaml:"method"`
+
+		ConsumerKey    string `yaml:"consumer_key"`
+		ConsumerSecret string `yaml:"consumer_secret"`
+		Token          string `yaml:"token"`
+		TokenSecret    string `yaml:"token_secret"`
+
+		Interval  int               `yaml:"interval"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+	} `yaml:"flickr"`
 }
 
 func (config *Config) ToCommandTypes() []CommandType {
@@ -334,6 +347,17 @@ func (config *Config) ToCommandTypes() []CommandType {
 		}
 
 		results = append(results, t)
+	}
+
+	for _, c := range config.Flickr {
+		// default interval 120 min
+		if c.Interval <= 0 {
+			c.Interval = 120
+		}
+
+		f := NewFlickr(c.Name, c.Method, c.ConsumerKey, c.ConsumerSecret, c.Token, c.TokenSecret, c.Interval, toNotifierTypes(c.Notifiers))
+
+		results = append(results, f)
 	}
 
 	return results
