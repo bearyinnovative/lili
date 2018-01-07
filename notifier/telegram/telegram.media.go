@@ -5,13 +5,11 @@ import (
 	"time"
 )
 
-var (
-	// caption(could be empty): images, only work for Merge Images
-	channel = make(chan map[string][]string, 10)
-)
-
 type MediaNotifier struct {
 	notifier *Notifier
+
+	// caption(could be empty): images, only work for Merge Images
+	channel chan map[string][]string
 }
 
 func NewMediaNotifier(token, chatID string) *MediaNotifier {
@@ -19,9 +17,10 @@ func NewMediaNotifier(token, chatID string) *MediaNotifier {
 		&Notifier{
 			token, chatID, "",
 		},
+		make(chan map[string][]string, 10),
 	}
 
-	go debounce(500*time.Millisecond, channel, func(args map[string][]string) {
+	go debounce(500*time.Millisecond, n.channel, func(args map[string][]string) {
 		// url: caption
 		var buffer []*textMediaPair
 
@@ -61,7 +60,7 @@ func NewMediaNotifier(token, chatID string) *MediaNotifier {
 }
 
 func (n *MediaNotifier) Notify(text string, images []string) error {
-	channel <- map[string][]string{
+	n.channel <- map[string][]string{
 		text: images,
 	}
 
