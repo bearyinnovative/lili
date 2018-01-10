@@ -100,6 +100,14 @@ type Config struct {
 		} `yaml:"subscribers,omitempty"`
 	} `yaml:"house"`
 
+	Rent58 []struct {
+		Province  string            `yaml:"province"`
+		District  string            `yaml:"district"`
+		RoomNum   int               `yaml:"room_num"`
+		Query     string            `yaml:"query"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+	} `yaml:"rent58"`
+
 	LocalBitcoin []struct {
 		Currency  string            `yaml:"currency"`
 		Interval  int               `yaml:"interval"`
@@ -239,6 +247,35 @@ func (config *Config) ToCommandTypes() []CommandType {
 
 		// log.Printf("appending %s with %d subscribers", c.Name, len(subs))
 		results = append(results, cmd)
+	}
+
+	for _, c := range config.Rent58 {
+		if c.Province == "" {
+			log.Println("can't find province:", c)
+			continue
+		}
+
+		if c.Query == "" {
+			log.Println("can't find query:", c)
+			continue
+		}
+
+		if c.District == "" {
+			log.Println("can't find district:", c)
+			continue
+		}
+
+		if c.RoomNum <= 0 {
+			c.RoomNum = 1
+		}
+
+		results = append(results, &house.Rent58{
+			Province:  c.Province,
+			District:  c.District,
+			RoomNum:   c.RoomNum,
+			Query:     c.Query,
+			Notifiers: toNotifierTypes(c.Notifiers),
+		})
 	}
 
 	for _, c := range config.Instagram {

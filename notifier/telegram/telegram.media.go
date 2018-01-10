@@ -59,7 +59,7 @@ func NewMediaNotifier(token, chatID string) *MediaNotifier {
 	return n
 }
 
-func (n *MediaNotifier) Notify(text string, images []string) error {
+func (n *MediaNotifier) Notify(id, text string, images []string) error {
 	n.channel <- map[string][]string{
 		text: images,
 	}
