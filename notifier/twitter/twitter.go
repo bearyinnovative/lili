@@ -16,7 +16,7 @@ type Notifier struct {
 	AccessSecret   string `yaml:"access_secret"`
 }
 
-func (n *Notifier) Notify(text string, images []string) error {
+func (n *Notifier) Notify(id, text string, media []string) error {
 	config := oauth1.NewConfig(n.ConsumerKey, n.ConsumerSecret)
 	token := oauth1.NewToken(n.AccessToken, n.AccessSecret)
 	httpClient := config.Client(oauth1.NoContext, token)
@@ -25,8 +25,8 @@ func (n *Notifier) Notify(text string, images []string) error {
 	client := twitter.NewClient(httpClient)
 
 	// Send a Tweet
-	if len(images) > 0 {
-		text += "\n" + strings.Join(images, "\n")
+	if len(media) > 0 {
+		text += "\n" + strings.Join(media, "\n")
 	}
 	_, resp, err := client.Statuses.Update(text, nil)
 

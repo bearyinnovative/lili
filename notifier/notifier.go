@@ -1,5 +1,5 @@
 package notifier
 
 type NotifierType interface {
-	Notify(text string, media []string) error
+	Notify(id, text string, media []string) error
 }

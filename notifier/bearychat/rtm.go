@@ -54,7 +54,7 @@ Loop:
 	}
 }
 
-func (n *RTMNotifier) Notify(text string, images []string) error {
+func (n *RTMNotifier) Notify(id, text string, media []string) error {
 	dic := map[string]interface{}{
 		"text": text,
 	}
@@ -64,16 +64,16 @@ func (n *RTMNotifier) Notify(text string, images []string) error {
 
 	// TODO: this doesn't work for now
 	/*
-		if len(images) > 0 {
-			imagesArr := []interface{}{}
-			for _, img := range images {
-				imagesArr = append(imagesArr, map[string]string{
+		if len(media) > 0 {
+			mediaArr := []interface{}{}
+			for _, img := range media {
+				mediaArr = append(mediaArr, map[string]string{
 					"url": img,
 				})
 			}
 			dic["attachments"] = []interface{}{
 				map[string]interface{}{
-					"images": imagesArr,
+					"images": mediaArr,
 				},
 			}
 		}

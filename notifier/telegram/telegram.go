@@ -7,6 +7,6 @@ type Notifier struct {
 	ParseMode string `yaml:"parse_mode,omitempty"`
 }
 
-func (n *Notifier) Notify(text string, images []string) error {
-	return n.notify(toPairs(text, images))
+func (n *Notifier) Notify(id, text string, media []string) error {
+	return n.notify(toPairs(text, media))
 }

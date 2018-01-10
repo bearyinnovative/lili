@@ -84,7 +84,7 @@ func fetchAndNotify(c CommandType) {
 				continue
 			}
 
-			err = n.Notify(text, item.Images)
+			err = n.Notify(item.Identifier, text, item.Images)
 			LogIfErr(err)
 
 			// TODO: need handle multi notifiers

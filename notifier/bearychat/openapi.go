@@ -20,11 +20,11 @@ func NewOpenAPINotifier(token, vid string) (*OpenAPINotifier, error) {
 	}, nil
 }
 
-func (n *OpenAPINotifier) Notify(text string, images []string) error {
+func (n *OpenAPINotifier) Notify(id, text string, media []string) error {
 	var attachment bc.MessageAttachment
-	if len(images) > 0 {
+	if len(media) > 0 {
 		attachment.Images = []bc.MessageAttachmentImage{}
-		for _, img := range images {
+		for _, img := range media {
 			attachment.Images = append(attachment.Images, bc.MessageAttachmentImage{&img})
 		}
 	}

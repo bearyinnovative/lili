@@ -31,7 +31,7 @@ type IncomingNotifier struct {
     ]
 }
 */
-func (n *IncomingNotifier) Notify(text string, images []string) error {
+func (n *IncomingNotifier) Notify(id, text string, media []string) error {
 	path := n.URL
 
 	dic := map[string]interface{}{
@@ -44,16 +44,16 @@ func (n *IncomingNotifier) Notify(text string, images []string) error {
 		dic["channel"] = n.ToChannel
 	}
 
-	if len(images) > 0 {
-		imagesArr := []interface{}{}
-		for _, img := range images {
-			imagesArr = append(imagesArr, map[string]string{
+	if len(media) > 0 {
+		mediaArr := []interface{}{}
+		for _, img := range media {
+			mediaArr = append(mediaArr, map[string]string{
 				"url": img,
 			})
 		}
 		dic["attachments"] = []interface{}{
 			map[string]interface{}{
-				"images": imagesArr,
+				"images": mediaArr,
 			},
 		}
 	}
