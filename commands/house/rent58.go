@@ -33,8 +33,16 @@ func (c *Rent58) GetInterval() time.Duration {
 }
 
 func (z *Rent58) Fetch() (results []*Item, err error) {
-	path := fmt.Sprintf("http://%s.58.com/%s/zufang/0/j%d/?key=%s&PGTID=0d300008-0000-3f8e-ad0c-6d8a38ee9b09&ClickID=4",
-		z.Province, z.District, z.RoomNum, url.PathEscape(z.Query))
+	room := ""
+	if z.RoomNum > 0 {
+		room = fmt.Sprintf("/j%d", z.RoomNum)
+	}
+	district := ""
+	if z.District != "" {
+		district = "/" + district
+	}
+	path := fmt.Sprintf("http://%s.58.com%s/zufang/0%s/?key=%s&PGTID=0d300008-0000-3f8e-ad0c-6d8a38ee9b09&ClickID=4",
+		z.Province, district, room, url.PathEscape(z.Query))
 
 	doc, err := respDoc(path)
 	if LogIfErr(err) {

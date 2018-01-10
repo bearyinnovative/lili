@@ -260,15 +260,6 @@ func (config *Config) ToCommandTypes() []CommandType {
 			continue
 		}
 
-		if c.District == "" {
-			log.Println("can't find district:", c)
-			continue
-		}
-
-		if c.RoomNum <= 0 {
-			c.RoomNum = 1
-		}
-
 		results = append(results, &house.Rent58{
 			Province:  c.Province,
 			District:  c.District,
