@@ -77,7 +77,7 @@ func (z *BaseZhihu) Fetch() (results []*Item, err error) {
 		dateStrComps := strings.Split(rawDateStr, " ")
 
 		if len(dateStrComps) != 0 {
-			loc, err := time.LoadLocation("Local")
+			loc, err := time.LoadLocation("Asia/Hong_Kong")
 			if LogIfErr(err) {
 				return nil, err
 			}

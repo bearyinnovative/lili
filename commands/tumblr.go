@@ -75,21 +75,17 @@ type TumblrPost struct {
 	ThumbnailWidth   int    `json:"thumbnail_width,omitempty"`
 	ThumbnailHeight  int    `json:"thumbnail_height,omitempty"`
 	Duration         int    `json:"duration,omitempty"`
-	Player           []struct {
-		Width     int    `json:"width"`
-		EmbedCode string `json:"embed_code"`
-	} `json:"player,omitempty"`
-	VideoType      string `json:"video_type,omitempty"`
-	SourceURL      string `json:"source_url,omitempty"`
-	SourceTitle    string `json:"source_title,omitempty"`
-	Artist         string `json:"artist,omitempty"`
-	TrackName      string `json:"track_name,omitempty"`
-	AlbumArt       string `json:"album_art,omitempty"`
-	Embed          string `json:"embed,omitempty"`
-	Plays          int    `json:"plays,omitempty"`
-	AudioURL       string `json:"audio_url,omitempty"`
-	AudioSourceURL string `json:"audio_source_url,omitempty"`
-	AudioType      string `json:"audio_type,omitempty"`
+	VideoType        string `json:"video_type,omitempty"`
+	SourceURL        string `json:"source_url,omitempty"`
+	SourceTitle      string `json:"source_title,omitempty"`
+	Artist           string `json:"artist,omitempty"`
+	TrackName        string `json:"track_name,omitempty"`
+	AlbumArt         string `json:"album_art,omitempty"`
+	Embed            string `json:"embed,omitempty"`
+	Plays            int    `json:"plays,omitempty"`
+	AudioURL         string `json:"audio_url,omitempty"`
+	AudioSourceURL   string `json:"audio_source_url,omitempty"`
+	AudioType        string `json:"audio_type,omitempty"`
 }
 
 type Tumblr struct {

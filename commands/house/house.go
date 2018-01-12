@@ -78,7 +78,7 @@ func (c *HouseSecondHand) loadCommunity() (*CommunityItem, error) {
 	}()
 
 	if c.communityOffset >= len(c.communities) {
-		c.log("reset offset from %d", c.communityOffset)
+		// c.log("reset offset from %d", c.communityOffset)
 		c.communityOffset = 0
 	}
 
@@ -91,7 +91,7 @@ func (c *HouseSecondHand) loadNextPageCommunityIfNeed() error {
 		return nil
 	}
 
-	c.log("start loading next page community from %d", len(c.communities))
+	// c.log("start loading next page community from %d", len(c.communities))
 	resp, err := fetchCommunicates(c.cityInfo.Id, len(c.communities), communityLimit, 0, 20)
 	if LogIfErr(err) {
 		return err
@@ -105,7 +105,7 @@ func (c *HouseSecondHand) loadNextPageCommunityIfNeed() error {
 
 	if resp.Data.TotalCount <= len(c.communities) {
 		c.communityFulfilled = true
-		c.log("no more communities total: %d, current: %d", resp.Data.TotalCount, len(c.communities))
+		// c.log("no more communities total: %d, current: %d", resp.Data.TotalCount, len(c.communities))
 	}
 
 	return nil
@@ -121,10 +121,10 @@ func (c *HouseSecondHand) fetchAllHouses(communityItem *CommunityItem) (results 
 			break
 		}
 
-		c.log("fetched %d, has more: %d, total: %d",
-			len(houseResp.Data.List),
-			houseResp.Data.HasMoreData,
-			houseResp.Data.TotalCount)
+		// c.log("internal fetched %d, has more: %d, total: %d",
+		// 	len(houseResp.Data.List),
+		// 	houseResp.Data.HasMoreData,
+		// 	houseResp.Data.TotalCount)
 
 		if houseResp.Errno != 0 {
 			c.log("ERROR: %d, %s", houseResp.Errno, houseResp.Error)
@@ -132,8 +132,8 @@ func (c *HouseSecondHand) fetchAllHouses(communityItem *CommunityItem) (results 
 		}
 
 		if len(houseResp.Data.List) == 0 || houseResp.Data.TotalCount == 0 {
-			c.log("stop with data count: %d, total count: %d",
-				len(houseResp.Data.List), houseResp.Data.TotalCount)
+			// c.log("stop with data count: %d, total count: %d",
+			// 	len(houseResp.Data.List), houseResp.Data.TotalCount)
 			break
 		}
 
@@ -194,15 +194,15 @@ func (c *HouseSecondHand) fetchAllHouses(communityItem *CommunityItem) (results 
 		}
 
 		if len(houseResp.Data.List) < limit || offset+limit >= houseResp.Data.TotalCount {
-			c.log("stop with data count: %d, total count: %d, offset: %d",
-				len(houseResp.Data.List), houseResp.Data.TotalCount, offset)
+			// c.log("stop with data count: %d, total count: %d, offset: %d",
+			// 	len(houseResp.Data.List), houseResp.Data.TotalCount, offset)
 			break
 		}
 
 		offset += limit
 	}
 
-	c.log("finished, %d changed", totalChangedCount)
+	c.log("internal finished, %d changed", totalChangedCount)
 
 	return
 }
@@ -223,9 +223,10 @@ func (hi *HouseItem) historyPriceInStrings() []string {
 }
 
 func (hi *HouseItem) getCreateTime() time.Time {
+	loc, _ := time.LoadLocation("Asia/Hong_Kong")
 	for _, info := range hi.InfoList {
 		if strings.HasPrefix(info.Name, "挂牌") {
-			t, err := time.ParseInLocation("2006.01.02", info.Value, time.Local)
+			t, err := time.ParseInLocation("2006.01.02", info.Value, loc)
 			if !LogIfErr(err) {
 				return t
 			}

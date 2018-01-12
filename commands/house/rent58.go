@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -25,7 +26,7 @@ type Rent58 struct {
 }
 
 func (c *Rent58) GetName() string {
-	return "58-rent-" + c.Query
+	return fmt.Sprintf("58-rent-%s-%s-%d-%s", c.Province, c.District, c.RoomNum, c.Query)
 }
 
 func (c *Rent58) GetInterval() time.Duration {
@@ -39,10 +40,12 @@ func (z *Rent58) Fetch() (results []*Item, err error) {
 	}
 	district := ""
 	if z.District != "" {
-		district = "/" + district
+		district = "/" + z.District
 	}
-	path := fmt.Sprintf("http://%s.58.com%s/zufang/0%s/?key=%s&PGTID=0d300008-0000-3f8e-ad0c-6d8a38ee9b09&ClickID=4",
-		z.Province, district, room, url.PathEscape(z.Query))
+	path := fmt.Sprintf("http://%s.58.com%s/zufang/0%s/?key=",
+		z.Province, district, room)
+	log.Printf("[%s] fetching: %s%s\n", z.GetName(), path, z.Query)
+	path += url.PathEscape(z.Query)
 
 	doc, err := respDoc(path)
 	if LogIfErr(err) {
@@ -91,6 +94,11 @@ func (z *Rent58) Fetch() (results []*Item, err error) {
            </li>
 */
 func (z *Rent58) createItem(s *goquery.Selection) *Item {
+	// filter 置顶房源
+	if len(s.Find("div.des h2 a.dingico_a").Nodes) > 0 {
+		return nil
+	}
+
 	reg := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
 	areaReg := regexp.MustCompile(`\d+㎡`)
 
@@ -105,6 +113,10 @@ func (z *Rent58) createItem(s *goquery.Selection) *Item {
 	timeStr := s.Find("div.sendTime").Text()
 	timeStr = strings.TrimSpace(timeStr)
 	timeStr = reg.ReplaceAllString(timeStr, " ")
+
+	// "2017-10-04", ignore parse time error
+	loc, _ := time.LoadLocation("Asia/Hong_Kong")
+	created, _ := time.ParseInLocation("2006-01-02", timeStr, loc)
 
 	des := s.Find("div.des h2 a").Text()
 	des = strings.TrimSpace(des)
@@ -133,6 +145,7 @@ func (z *Rent58) createItem(s *goquery.Selection) *Item {
 		Desc:       itemDesc,
 		Ref:        ref,
 		Key:        money,
+		Created:    created,
 		Notifiers:  z.Notifiers,
 	}
 }

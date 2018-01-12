@@ -71,7 +71,7 @@ func (c *DoubanStatus) Fetch() (results []*Item, err error) {
 		return
 	}
 
-	loc, err := time.LoadLocation("Local")
+	loc, err := time.LoadLocation("Asia/Hong_Kong")
 	if LogIfErr(err) {
 		return
 	}
