@@ -2,7 +2,6 @@ package commands
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -32,6 +31,14 @@ type CoinMarketResps []struct {
 	PriceCny         string `json:"price_cny"`
 	Two4HVolumeCny   string `json:"24h_volume_cny"`
 	MarketCapCny     string `json:"market_cap_cny"`
+}
+
+var whiteList []string = []string{
+	"ada",
+	"gxshares",
+	"eos",
+	"qtum",
+	"tether",
 }
 
 type CoinMarket struct {
@@ -72,18 +79,10 @@ func (c *CoinMarket) Fetch() (results []*Item, err error) {
 		return
 	}
 
-	length := len(cmResps)
-	if length == 0 {
-		err = errors.New("no response for coin market")
-		return
-	}
+	cmResps = cmResps.filtered()
 
-	if length > 10 {
-		length = 10
-	}
-
-	lines := make([]string, length)
-	for i, m := range cmResps[:length] {
+	lines := make([]string, len(cmResps))
+	for i, m := range cmResps {
 		// Bitcoin $13925.90 ¥91564.88 -1.68% -3.68% -10.68% 📉
 		var chart string
 		if strings.HasPrefix(m.PercentChange1H, "-") {
@@ -114,4 +113,16 @@ func (c *CoinMarket) Fetch() (results []*Item, err error) {
 
 	results = append(results, item)
 	return
+}
+
+func (resps CoinMarketResps) filtered() CoinMarketResps {
+	newResps := CoinMarketResps{}
+	for i, resp := range resps {
+		if i >= 10 && !stringInSlice(resp.ID, whiteList) {
+			continue
+		}
+
+		newResps = append(newResps, resp)
+	}
+	return newResps
 }

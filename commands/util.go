@@ -7,6 +7,15 @@ import (
 	"testing"
 )
 
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 func prettyPriceInWan(priceStr string) string {
 	price, err := strconv.ParseFloat(priceStr, 64)
 	if err != nil {
