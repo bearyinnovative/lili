@@ -104,7 +104,7 @@ type Config struct {
 		Province  string            `yaml:"province"`
 		District  string            `yaml:"district"`
 		RoomNum   int               `yaml:"room_num"`
-		Query     string            `yaml:"query"`
+		Keywords  []string          `yaml:"keywords"`
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"rent58"`
 
@@ -255,18 +255,20 @@ func (config *Config) ToCommandTypes() []CommandType {
 			continue
 		}
 
-		if c.Query == "" {
-			log.Println("can't find query:", c)
-			continue
-		}
+		for _, keyword := range c.Keywords {
+			if keyword == "" {
+				log.Println("can't find query:", c)
+				continue
+			}
 
-		results = append(results, &house.Rent58{
-			Province:  c.Province,
-			District:  c.District,
-			RoomNum:   c.RoomNum,
-			Query:     c.Query,
-			Notifiers: toNotifierTypes(c.Notifiers),
-		})
+			results = append(results, &house.Rent58{
+				Province:  c.Province,
+				District:  c.District,
+				RoomNum:   c.RoomNum,
+				Query:     keyword,
+				Notifiers: toNotifierTypes(c.Notifiers),
+			})
+		}
 	}
 
 	for _, c := range config.Instagram {

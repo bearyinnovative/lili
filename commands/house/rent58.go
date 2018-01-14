@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -30,7 +31,7 @@ func (c *Rent58) GetName() string {
 }
 
 func (c *Rent58) GetInterval() time.Duration {
-	return time.Minute * 45
+	return time.Minute*45 + time.Minute*time.Duration(rand.Intn(15))
 }
 
 func (z *Rent58) Fetch() (results []*Item, err error) {
