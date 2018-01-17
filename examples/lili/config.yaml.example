@@ -179,6 +179,35 @@ house:
   # - name: 太原
   # - name: 惠州
 
+rent58:
+  - province: gz
+    district: tianhe
+    room_num: 2
+    keywords: 
+      - 猎德花园
+    notifiers: 
+    - type: telegram
+      token: YOUR_TELEGRAM_TOKEN
+      parse_mode: markdown
+      chat_id: "-272896937"
+  - province: sz
+    district: nanshan
+    keywords: 
+      - 田廈翡翠明珠花园
+      - 厚德品园
+      - 桃花园
+      - 阳光里雅居
+      - 荔园大厦
+      - 阳光华艺大厦
+      - 友邻公寓
+      - 星海名城
+      - 新德家园
+      - 东方银座公馆
+    notifiers: 
+    - type: bearychat.incoming
+      url: https://hook.bearychat.com/=bw52O/incoming/xxxxxxxxx
+      to_channel: house_rent
+
 localbitcoin:
   - currency: CNY
     interval: 1
