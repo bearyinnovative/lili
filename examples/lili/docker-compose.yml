@@ -41,5 +41,6 @@ services:
       - mongodb
     working_dir: /tmp/mongo-scripts
     entrypoint: /tmp/mongo-scripts/main.sh
+    restart: always
 volumes:
   data:
