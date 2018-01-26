@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 
 	. "github.com/bearyinnovative/lili/model"
@@ -16,11 +17,17 @@ type Flickr struct {
 	Name     string
 	Interval int
 
+	// extra params
+	UserID string
+
 	// optional
 	Notifiers []NotifierType
 }
 
-func NewFlickr(name, method, consumerKey, consumerSecret, token, tokenSecret string, interval int, notifiers []NotifierType) *Flickr {
+func NewFlickr(name, method,
+	consumerKey, consumerSecret, token, tokenSecret string,
+	userID string,
+	interval int, notifiers []NotifierType) *Flickr {
 	client := NewFlickrClient(
 		consumerKey,
 		consumerSecret,
@@ -29,10 +36,13 @@ func NewFlickr(name, method, consumerKey, consumerSecret, token, tokenSecret str
 	)
 
 	return &Flickr{
-		client:    client,
-		method:    method,
-		Name:      name,
-		Interval:  interval,
+		client:   client,
+		method:   method,
+		Name:     name,
+		Interval: interval,
+
+		UserID: userID,
+
 		Notifiers: notifiers,
 	}
 }
@@ -47,7 +57,11 @@ func (c *Flickr) GetInterval() time.Duration {
 
 func (c *Flickr) Fetch() (results []*Item, err error) {
 
-	resp, err := c.client.Get(c.method)
+	params := url.Values{}
+	if c.UserID != "" {
+		params.Set("user_id", c.UserID)
+	}
+	resp, err := c.client.GetWithParams(c.method, params)
 	if LogIfErr(err) {
 		return
 	}

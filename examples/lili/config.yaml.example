@@ -263,3 +263,17 @@ flickr:
       - type: telegram.media
         token: YOUR_TELEGRAM_TOKEN
         chat_id: "-1001138808140"
+
+twitter:
+  - name: rocry
+    interval: 235
+    consumer_key: "REPLACE_ME"
+    consumer_secret: "REPLACE_ME"
+    token: "REPLACE_ME"
+    token_secret: "REPLACE_ME"
+    username: RoCry
+    notifiers:
+      - type: telegram
+        parse_mode: markdown
+        token: YOUR_TELEGRAM_TOKEN
+        chat_id: "-1001138808140"

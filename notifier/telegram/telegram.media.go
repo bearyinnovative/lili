@@ -12,10 +12,10 @@ type MediaNotifier struct {
 	channel chan map[string][]string
 }
 
-func NewMediaNotifier(token, chatID string) *MediaNotifier {
+func NewMediaNotifier(token, chatID string, disableNotification bool) *MediaNotifier {
 	n := &MediaNotifier{
 		&Notifier{
-			token, chatID, "",
+			token, chatID, "", disableNotification, false,
 		},
 		make(chan map[string][]string, 10),
 	}
@@ -63,6 +63,8 @@ func (n *MediaNotifier) Notify(id, text string, images []string) error {
 	n.channel <- map[string][]string{
 		text: images,
 	}
+
+	// fmt.Println("notify:", id, text, images)
 
 	// TODO: handle error
 	return nil

@@ -68,6 +68,9 @@ func (n *Notifier) notify(pairs []*textMediaPair) error {
 				values["parse_mode"] = n.ParseMode
 			}
 
+			values["disable_web_page_preview"] = n.DisableWebPagePreview
+			values["disable_notification"] = n.DisableNotification
+
 			err := n.send(method, values)
 			if err != nil {
 				log.Println("err:", err, values)

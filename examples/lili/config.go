@@ -27,8 +27,10 @@ type ConfigNotifier struct {
 	// telegram/telegram.media
 	Token string `yaml:"token"`
 	// `@channel_name` or integer id as string: `-123456`
-	ChatID    string `yaml:"chat_id"`
-	ParseMode string `yaml:"parse_mode,omitempty"`
+	ChatID                string `yaml:"chat_id"`
+	ParseMode             string `yaml:"parse_mode,omitempty"`
+	DisableWebPagePreview bool   `yaml:"disable_web_page_preview"`
+	DisableNotification   bool   `yaml:"disable_notification"`
 }
 
 func (cn *ConfigNotifier) toNotifierType() NotifierType {
@@ -45,12 +47,14 @@ func (cn *ConfigNotifier) toNotifierType() NotifierType {
 		}
 	case "telegram":
 		return &telegram.Notifier{
-			Token:     cn.Token,
-			ChatID:    cn.ChatID,
-			ParseMode: cn.ParseMode,
+			Token:                 cn.Token,
+			ChatID:                cn.ChatID,
+			ParseMode:             cn.ParseMode,
+			DisableWebPagePreview: cn.DisableWebPagePreview,
+			DisableNotification:   cn.DisableNotification,
 		}
 	case "telegram.media":
-		return telegram.NewMediaNotifier(cn.Token, cn.ChatID)
+		return telegram.NewMediaNotifier(cn.Token, cn.ChatID, cn.DisableNotification)
 	default:
 		log.Fatal("type unknown:", cn.Type)
 		return nil
@@ -152,9 +156,30 @@ type Config struct {
 		Token          string `yaml:"token"`
 		TokenSecret    string `yaml:"token_secret"`
 
+		UserID string `yaml:"user_id"`
+
 		Interval  int               `yaml:"interval"`
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"flickr"`
+
+	Twitter []struct {
+		Name      string `yaml:"name"`
+		MediaOnly bool   `yaml:"media_only"`
+
+		Query    string `yaml:"query"`
+		Username string `yaml:"username"`
+
+		MinFavCount int `yaml:"min_fav_count"`
+		MinRetCount int `yaml:"min_ret_count"`
+
+		ConsumerKey    string `yaml:"consumer_key"`
+		ConsumerSecret string `yaml:"consumer_secret"`
+		Token          string `yaml:"token"`
+		TokenSecret    string `yaml:"token_secret"`
+
+		Interval  int               `yaml:"interval"`
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+	} `yaml:"twitter"`
 }
 
 func (config *Config) ToCommandTypes() []CommandType {
@@ -385,9 +410,29 @@ func (config *Config) ToCommandTypes() []CommandType {
 			c.Interval = 120
 		}
 
-		f := NewFlickr(c.Name, c.Method, c.ConsumerKey, c.ConsumerSecret, c.Token, c.TokenSecret, c.Interval, toNotifierTypes(c.Notifiers))
+		f := NewFlickr(c.Name, c.Method,
+			c.ConsumerKey, c.ConsumerSecret, c.Token, c.TokenSecret,
+			c.UserID,
+			c.Interval, toNotifierTypes(c.Notifiers))
 
 		results = append(results, f)
+	}
+
+	for _, c := range config.Twitter {
+		// default interval 120 min
+		if c.Interval <= 0 {
+			c.Interval = 120
+		}
+
+		t := NewTwitter(c.Name,
+			c.ConsumerKey, c.ConsumerSecret, c.Token, c.TokenSecret,
+			c.Query, c.Username,
+			c.MediaOnly,
+			c.MinFavCount,
+			c.MinRetCount,
+			c.Interval, toNotifierTypes(c.Notifiers))
+
+		results = append(results, t)
 	}
 
 	return results
