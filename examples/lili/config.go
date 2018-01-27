@@ -76,6 +76,7 @@ type Config struct {
 		Tags      []string          `yaml:"tags,omitempty"`
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 		Usernames []string          `yaml:"usernames,omitempty"`
+		MediaOnly bool              `yaml:"media_only"`
 	} `yaml:"instagram"`
 
 	Hackernews []struct {
@@ -303,7 +304,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 			}
 
 			notifiers := toNotifierTypes(c.Notifiers)
-			results = append(results, NewTagInstagram(notifiers, tag))
+			results = append(results, NewTagInstagram(notifiers, tag, c.MediaOnly))
 		}
 
 		for _, username := range c.Usernames {
@@ -312,7 +313,7 @@ func (config *Config) ToCommandTypes() []CommandType {
 			}
 
 			notifiers := toNotifierTypes(c.Notifiers)
-			results = append(results, NewUserInstagram(notifiers, username))
+			results = append(results, NewUserInstagram(notifiers, username, c.MediaOnly))
 		}
 	}
 

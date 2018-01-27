@@ -12,9 +12,10 @@ import (
 	simplejson "github.com/bitly/go-simplejson"
 )
 
-func NewTagInstagram(notifiers []NotifierType, tag string) CommandType {
+func NewTagInstagram(notifiers []NotifierType, tag string, mediaOnly bool) CommandType {
 	return &baseInstagram{
 		notifiers: notifiers,
+		mediaOnly: mediaOnly,
 		RootPath:  "tag",
 		ID:        "tag-" + tag,
 		PathGenerator: func() string {
@@ -23,9 +24,10 @@ func NewTagInstagram(notifiers []NotifierType, tag string) CommandType {
 	}
 }
 
-func NewUserInstagram(notifiers []NotifierType, username string) CommandType {
+func NewUserInstagram(notifiers []NotifierType, username string, mediaOnly bool) CommandType {
 	return &baseInstagram{
 		notifiers: notifiers,
+		mediaOnly: mediaOnly,
 		RootPath:  "user",
 		ID:        username,
 		PathGenerator: func() string {
@@ -36,6 +38,7 @@ func NewUserInstagram(notifiers []NotifierType, username string) CommandType {
 
 type baseInstagram struct {
 	notifiers     []NotifierType
+	mediaOnly     bool
 	ID            string
 	RootPath      string
 	PathGenerator func() string
@@ -110,6 +113,11 @@ func (c *baseInstagram) Fetch() (results []*Item, err error) {
 		}
 
 		created := time.Unix(createdUnix, 0)
+
+		if c.mediaOnly {
+			desc = ""
+			created = time.Time{}
+		}
 
 		item := &Item{
 			Name:       c.GetName(),
