@@ -28,6 +28,7 @@ services:
     command: mongod --smallfiles --bind_ip_all
     ports:
       - "27017:27017"
+    restart: always
   script:
     image: mongo
     volumes:
@@ -41,6 +42,5 @@ services:
       - mongodb
     working_dir: /tmp/mongo-scripts
     entrypoint: /tmp/mongo-scripts/main.sh
-    restart: always
 volumes:
   data:
