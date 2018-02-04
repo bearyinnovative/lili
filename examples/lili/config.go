@@ -113,6 +113,10 @@ type Config struct {
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"rent58"`
 
+	PetChainBaidu []struct {
+		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+	} `yaml:"petchainbaidu"`
+
 	LocalBitcoin []struct {
 		Currency  string            `yaml:"currency"`
 		Interval  int               `yaml:"interval"`
@@ -328,6 +332,12 @@ func (config *Config) ToCommandTypes() []CommandType {
 				Query:     keyword,
 			})
 		}
+	}
+
+	for _, c := range config.PetChainBaidu {
+		results = append(results, &PetChainBaidu{
+			Notifiers: toNotifierTypes(c.Notifiers),
+		})
 	}
 
 	for _, c := range config.LocalBitcoin {
