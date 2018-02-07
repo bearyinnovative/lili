@@ -87,6 +87,19 @@ type Config struct {
 		MinCommentCount int               `yaml:"min_comment_count,omitempty"`
 	} `yaml:"hackernews"`
 
+	NewsAPI []struct {
+		Endpoint string `yaml:"endpoint"`
+		Sources  string `yaml:"sources"`
+		APIKey   string `yaml:"api_key"`
+		Interval int    `yaml:"interval"`
+
+		Subscribers []struct {
+			Name      string            `yaml:"name"`
+			Keywords  []string          `yaml:"keywords,omitempty"`
+			Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
+		} `yaml:"subscribers"`
+	} `yaml:"newsapi"`
+
 	Douban []struct {
 		ID        string            `yaml:"id"`
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
@@ -241,6 +254,42 @@ func (config *Config) ToCommandTypes() []CommandType {
 				return true
 			},
 		})
+	}
+	if len(hnSubs) > 0 {
+		results = append(results, &HackerNews{Subscribers: hnSubs})
+	}
+
+	for _, c := range config.NewsAPI {
+		if c.Interval <= 0 {
+			c.Interval = 90
+		}
+
+		var subs = []*NewsAPISubscriber{}
+		for _, sub := range c.Subscribers {
+			keywords := sub.Keywords
+
+			subs = append(subs, &NewsAPISubscriber{
+				Name:      sub.Name,
+				Notifiers: toNotifierTypes(sub.Notifiers),
+				ShouldNotify: func(article *Article) bool {
+					if len(keywords) > 0 && !checkContains(article.Title, keywords) {
+						return false
+					}
+
+					return true
+				},
+			})
+		}
+
+		api := &NewsAPI{
+			Subscribers: subs,
+			Endpoint:    c.Endpoint,
+			Sources:     c.Sources,
+			APIKey:      c.APIKey,
+			Interval:    c.Interval,
+		}
+
+		results = append(results, api)
 	}
 	if len(hnSubs) > 0 {
 		results = append(results, &HackerNews{Subscribers: hnSubs})
