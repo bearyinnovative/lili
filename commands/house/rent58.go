@@ -123,11 +123,18 @@ func (z *Rent58) createItem(s *goquery.Selection) *Item {
 	des = strings.TrimSpace(des)
 	des = reg.ReplaceAllString(des, " ")
 
-	// 有的时候会返回一些不太相关的... 原因不明
-	if !strings.Contains(des, z.Query) {
-		log.Printf("[%s] `%s` doesn't contains `%s`\n", z.GetName(), des, z.Query)
+	// 个人房源
+	individual := len(s.Find("div.des p.geren").Nodes) > 0
+	if !individual {
+		// log.Println(z.Query, "filter no individual")
 		return nil
 	}
+
+	// 有的时候会返回一些不太相关的... 原因不明
+	// if !strings.Contains(des, z.Query) {
+	// 	log.Printf("[%s] `%s` doesn't contains `%s`\n", z.GetName(), des, z.Query)
+	// 	return nil
+	// }
 
 	area := s.Find("div.des p.room").Text()
 	area = areaReg.FindString(area)
