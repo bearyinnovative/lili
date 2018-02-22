@@ -67,10 +67,13 @@ type Config struct {
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
 	} `yaml:"zhihu"`
 
-	V2EX []struct {
+	Google []struct {
+		ID        string            `yaml:"id"`
+		Key       string            `yaml:"key"`
+		Cx        string            `yaml:"cx"`
 		Keywords  []string          `yaml:"keywords"`
 		Notifiers []*ConfigNotifier `yaml:notifiers,omitempty`
-	} `yaml:"v2ex"`
+	} `yaml:"google"`
 
 	Instagram []struct {
 		Tags      []string          `yaml:"tags,omitempty"`
@@ -370,15 +373,18 @@ func (config *Config) ToCommandTypes() []CommandType {
 		}
 	}
 
-	for _, c := range config.V2EX {
+	for _, c := range config.Google {
 		for _, keyword := range c.Keywords {
 			if keyword == "" {
 				continue
 			}
 
-			results = append(results, &BaseV2EX{
-				Notifiers: toNotifierTypes(c.Notifiers),
-				Query:     keyword,
+			results = append(results, &BaseGoogle{
+				Notifiers:  toNotifierTypes(c.Notifiers),
+				Identifier: c.ID + "-" + keyword,
+				Query:      keyword,
+				Key:        c.Key,
+				Cx:         c.Cx,
 			})
 		}
 	}

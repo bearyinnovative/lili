@@ -16,9 +16,14 @@ zhihu:
         url: https://hook.bearychat.com/=bw52O/incoming/xxxxxxxxx
         to_channel: 不是真的lili
 
-# 搜索v2ex关键词
-v2ex:
-  - keywords:
+# 搜索 google 关键词
+# key: https://developers.google.com/custom-search/json-api/v1/introduction#identify_your_application_to_google_with_api_key
+# cx: https://cse.google.com/cse/all
+google:
+  - id: v2ex
+    key: GOOGLE_KEY
+    cx: GOOGLE_CX
+    keywords:
     - BearyChat
     notifiers:
       - type: bearychat.incoming

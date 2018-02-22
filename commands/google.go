@@ -13,27 +13,30 @@ import (
 	simplejson "github.com/bitly/go-simplejson"
 )
 
-type BaseV2EX struct {
-	Notifiers []NotifierType
-	Query     string
+type BaseGoogle struct {
+	Notifiers  []NotifierType
+	Identifier string
+	Query      string
+	Key        string
+	Cx         string
 }
 
-func (c *BaseV2EX) GetName() string {
-	return "v2ex-" + c.Query
+func (c *BaseGoogle) GetName() string {
+	return "google-" + c.Identifier
 }
 
-func (c *BaseV2EX) GetInterval() time.Duration {
-	return time.Minute * 45
+func (c *BaseGoogle) GetInterval() time.Duration {
+	return time.Minute * 110
 }
 
-func (c *BaseV2EX) Fetch() (results []*Item, err error) {
-	// custom search v2ex (GET https://www.googleapis.com/customsearch/v1?key=AIzaSyC1Q3F9GsEaIaxLe4zRwMeOhhNr7axtXEg&cx=011777316675351136864:22g5hinnt0i&q=bearychat)
+func (c *BaseGoogle) Fetch() (results []*Item, err error) {
+	// custom search (GET https://www.googleapis.com/customsearch/v1?key=KEY_HERE&cx=CONTEXT_HERE&q=bearychat)
 
 	// Create client
 	client := &http.Client{}
 
 	// Create request
-	path := fmt.Sprintf("https://www.googleapis.com/customsearch/v1?key=AIzaSyC1Q3F9GsEaIaxLe4zRwMeOhhNr7axtXEg&cx=011777316675351136864:22g5hinnt0i&q=%s", url.PathEscape(c.Query))
+	path := fmt.Sprintf("https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&q=%s", c.Key, c.Cx, url.PathEscape(c.Query))
 	req, err := http.NewRequest("GET", path, nil)
 	if LogIfErr(err) {
 		return
@@ -87,7 +90,7 @@ func (c *BaseV2EX) Fetch() (results []*Item, err error) {
 		item := &Item{
 			Name: c.GetName(),
 			// use link as part of identifier
-			Identifier: "bc_v2ex_" + link,
+			Identifier: c.GetName() + "-" + link,
 			Desc:       desc,
 			Ref:        link,
 			Created:    created,
