@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -53,22 +54,8 @@ func (c *baseInstagram) GetInterval() time.Duration {
 }
 
 func (c *baseInstagram) Fetch() (results []*Item, err error) {
-	// Create client
-	client := &http.Client{}
-
-	// Create request
 	path := c.PathGenerator()
-	req, err := http.NewRequest("GET", path, nil)
-	// fmt.Println("GET", path)
-
-	// Fetch Request
-	resp, err := client.Do(req)
-	if LogIfErr(err) {
-		return
-	}
-
-	defer resp.Body.Close()
-	json, err := simplejson.NewFromReader(resp.Body)
+	json, err := getJSON(path)
 	if LogIfErr(err) {
 		return
 	}
@@ -78,60 +65,138 @@ func (c *baseInstagram) Fetch() (results []*Item, err error) {
 	for i := 0; i < len(data.MustArray([]interface{}{})); i++ {
 		d := data.GetIndex(i)
 
-		image_urls := []string{}
-
-		image_url := d.GetPath("display_src").MustString("")
-		if image_url == "" {
-			continue
-		}
-		image_urls = append(image_urls, image_url)
-
-		if len(image_urls) == 0 {
+		code, item := c.nodeToItem(d)
+		if code == "" || item == nil {
 			continue
 		}
 
-		code := d.GetPath("code").MustString("")
-		if code == "" {
+		items := c.tryGetMultiItemsFromNode(code, item)
+		if len(items) > 0 {
+			results = append(results, items...)
+		} else {
+			results = append(results, item)
+		}
+
+		// fmt.Println(i, item)
+	}
+
+	return
+}
+
+func (c *baseInstagram) tryGetMultiItemsFromNode(code string, item *Item) (results []*Item) {
+	path := fmt.Sprintf("https://www.instagram.com/p/%s/?__a=1", code)
+	json, err := getJSON(path)
+	if LogIfErr(err) {
+		return
+	}
+
+	data := json.GetPath("graphql", "shortcode_media", "edge_sidecar_to_children", "edges")
+	if len(data.MustArray([]interface{}{})) == 0 {
+		// fmt.Println("not multi")
+		return
+	}
+
+	for i := 0; i < len(data.MustArray([]interface{}{})); i++ {
+		d := data.GetIndex(i).GetPath("node")
+
+		urls, id := urlsAndIDFromNode(d)
+		if len(urls) == 0 || id == "" {
 			continue
 		}
-		link := "https://www.instagram.com/p/" + code
 
-		id := d.GetPath("id").MustString("")
-		if id == "" {
-			continue
-		}
-
-		desc := d.GetPath("caption").MustString("")
-		if desc != "" {
-			desc += "\n"
-		}
-		desc += link
-
-		createdUnix := d.GetPath("date").MustInt64(0)
-		if createdUnix == 0 {
-			continue
-		}
-
-		created := time.Unix(createdUnix, 0)
-
-		if c.mediaOnly {
-			desc = ""
-			created = time.Time{}
-		}
-
-		item := &Item{
-			Name:       c.GetName(),
-			Identifier: "instagram_" + id,
-			Desc:       desc,
-			Ref:        link,
-			Created:    created,
-			Images:     image_urls,
-			Notifiers:  c.notifiers,
-		}
+		item = c.newItem(id, item.Desc, item.Ref, item.Created, urls)
 		results = append(results, item)
 
 		// fmt.Println(i, item)
 	}
 
 	return
+}
+
+func urlsAndIDFromNode(d *simplejson.Json) (image_urls []string, id string) {
+	id = d.GetPath("id").MustString("")
+	if id == "" {
+		return
+	}
+
+	image_url := d.GetPath("display_src").MustString("")
+	if image_url == "" {
+		image_url = d.GetPath("display_url").MustString("")
+	}
+
+	if image_url == "" {
+		return
+	}
+
+	image_urls = append(image_urls, image_url)
+
+	return
+}
+
+func (c *baseInstagram) nodeToItem(d *simplejson.Json) (code string, item *Item) {
+	code = d.GetPath("code").MustString("")
+	if code == "" {
+		return
+	}
+
+	urls, id := urlsAndIDFromNode(d)
+	if len(urls) == 0 || id == "" {
+		return
+	}
+
+	link := "https://www.instagram.com/p/" + code
+
+	desc := d.GetPath("caption").MustString("")
+	if desc != "" {
+		desc += "\n"
+	}
+	desc += link
+
+	createdUnix := d.GetPath("date").MustInt64(0)
+	if createdUnix == 0 {
+		return
+	}
+
+	created := time.Unix(createdUnix, 0)
+
+	if c.mediaOnly {
+		desc = ""
+		created = time.Time{}
+	}
+
+	item = c.newItem(id, desc, link, created, urls)
+
+	return
+}
+
+func getJSON(path string) (*simplejson.Json, error) {
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("GET", path)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	json, err := simplejson.NewFromReader(resp.Body)
+	return json, err
+}
+
+func (c *baseInstagram) newItem(id, desc, link string, created time.Time, image_urls []string) *Item {
+	return &Item{
+		Name:       c.GetName(),
+		Identifier: "instagram_" + id,
+		Desc:       desc,
+		Ref:        link,
+		Created:    created,
+		Images:     image_urls,
+		Notifiers:  c.notifiers,
+	}
 }
