@@ -144,11 +144,11 @@ func (c *Twitter) toItem(t Tweet) *Item {
 	ref := fmt.Sprintf("https://twitter.com/%s/status/%d", t.User.ScreenName, t.ID)
 
 	desc := ""
+	created := time.Time{}
 	if !c.MediaOnly {
 		desc = fmt.Sprintf("%s %s", t.Text, ref)
+		created, _ = t.CreatedAtTime()
 	}
-
-	created, _ := t.CreatedAtTime()
 
 	return &Item{
 		Name:       c.GetName(),
